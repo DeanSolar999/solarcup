@@ -51,54 +51,59 @@
         .loader-sub { color: #666; font-size: 0.8rem; margin-top:10px; letter-spacing: 1px; }
         @keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
 
-        /* === Sticky Header === */
+        /* === Sticky Header (Mobile Optimized) === */
         .sticky-controls {
             position: sticky; top: 0; z-index: 1000;
             background: rgba(11, 11, 14, 0.95);
             backdrop-filter: blur(10px);
             border-bottom: 2px solid var(--eva-purple);
             box-shadow: 0 5px 20px rgba(0,0,0,0.8);
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
 
         .title-card {
             font-family: "MS Mincho", "SimSun", serif;
             font-weight: 900; text-align: center; 
             font-size: 2.2rem; letter-spacing: 0.1em; color: #fff; padding-top: 15px;
-            text-shadow: 0 0 10px var(--eva-purple); line-height: 1.2;
+            text-shadow: 0 0 10px var(--eva-purple); line-height: 1.1;
         }
         .sub-title {
             text-align: center; font-size: 0.75rem; color: var(--eva-green); 
-            letter-spacing: 3px; margin-bottom: 10px; opacity: 0.8; font-weight: bold;
+            letter-spacing: 3px; margin-bottom: 8px; opacity: 0.8; font-weight: bold;
         }
 
         /* Filter Buttons */
         .filter-container { width: 100%; overflow-x: auto; padding: 0 10px; -webkit-overflow-scrolling: touch; }
-        .filter-group { display: flex; justify-content: center; gap: 8px; margin: 5px 0; white-space: nowrap; min-width: max-content; }
-        @media (max-width: 600px) {
-            .filter-group { justify-content: flex-start; }
-            .filter-container::-webkit-scrollbar { display: none; } 
-            .title-card { font-size: 1.8rem; padding-top: 10px; }
-        }
-
+        .filter-group { display: flex; justify-content: center; gap: 6px; margin: 5px 0; white-space: nowrap; min-width: max-content; }
+        
         .filter-btn {
             background: rgba(0,0,0,0.6); border: 1px solid #444;
-            color: #aaa; padding: 8px 16px; cursor: pointer;
-            font-size: 0.85rem; letter-spacing: 1px; transition: all 0.2s;
+            color: #aaa; padding: 6px 14px; cursor: pointer;
+            font-size: 0.8rem; letter-spacing: 1px; transition: all 0.2s;
             text-transform: uppercase; border-radius: 4px; flex-shrink: 0;
         }
         .filter-btn.active { color: #000; font-weight: bold; border: none; transform: scale(1.05); }
-        .btn-all.active { background: #fff; box-shadow: 0 0 10px #fff; }
-        .btn-plat.active { background: var(--color-platinum); box-shadow: 0 0 10px var(--color-platinum); }
-        .btn-gold.active { background: var(--color-gold); box-shadow: 0 0 10px var(--color-gold); }
-        .btn-silver.active { background: var(--color-silver); box-shadow: 0 0 10px var(--color-silver); }
-        .btn-bronze.active { background: var(--color-bronze); box-shadow: 0 0 10px var(--color-bronze); }
+        .btn-all.active { background: #fff; box-shadow: 0 0 8px #fff; }
+        .btn-plat.active { background: var(--color-platinum); box-shadow: 0 0 8px var(--color-platinum); }
+        .btn-gold.active { background: var(--color-gold); box-shadow: 0 0 8px var(--color-gold); }
+        .btn-silver.active { background: var(--color-silver); box-shadow: 0 0 8px var(--color-silver); }
+        .btn-bronze.active { background: var(--color-bronze); box-shadow: 0 0 8px var(--color-bronze); }
 
         .search-box { display: flex; justify-content: center; padding: 5px 15px; margin-top: 5px;}
         #searchInput {
             background: rgba(0,0,0,0.5); border: 1px solid var(--eva-purple);
-            color: #fff; padding: 12px; width: 100%; max-width: 500px;
-            text-align: center; font-size: 1rem; border-radius: 4px;
+            color: #fff; padding: 10px; width: 100%; max-width: 500px;
+            text-align: center; font-size: 0.9rem; border-radius: 4px;
+        }
+
+        /* === Mobile Specific Adjustments === */
+        @media (max-width: 600px) {
+            .title-card { font-size: 1.6rem; padding-top: 10px; } /* 手機標題縮小 */
+            .sub-title { font-size: 0.65rem; letter-spacing: 2px; }
+            .filter-group { justify-content: flex-start; padding-left: 5px; } /* 按鈕靠左可滑動 */
+            .filter-btn { padding: 5px 12px; font-size: 0.75rem; }
+            .search-box { margin-top: 2px; }
+            #searchInput { padding: 8px; font-size: 0.85rem; }
         }
 
         /* === Table System === */
@@ -109,35 +114,36 @@
             letter-spacing: 2px; margin-top: 10px; font-weight: bold;
         }
 
-        table { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 4px; table-layout: fixed; }
         thead th {
-            background: #151515; color: #888; padding: 12px;
+            background: #151515; color: #888; padding: 10px 4px;
             border-bottom: 2px solid var(--eva-purple);
-            font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;
+            font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
         th.th-total { color: var(--eva-green); border-bottom: 2px solid var(--eva-green); }
 
         tr { position: relative; }
         td {
-            padding: 12px; text-align: center;
+            padding: 10px 2px; text-align: center;
             background: rgba(30,30,35,0.7);
             border: 1px solid transparent;
-            font-size: 1rem; color: #ddd; vertical-align: middle; cursor: pointer;
+            font-size: 0.95rem; color: #ddd; vertical-align: middle; cursor: pointer;
+            overflow: hidden; text-overflow: ellipsis;
         }
 
-        /* List View */
+        /* List View Optimization */
         tbody.list-view td:first-child {
             position: relative;
             background-image: linear-gradient(30deg, #000 12%, transparent 12.5%, transparent 87%, #000 87.5%, #000), linear-gradient(150deg, #000 12%, transparent 12.5%, transparent 87%, #000 87.5%, #000), linear-gradient(60deg, rgba(255,255,255,0.05) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.05) 75%, rgba(255,255,255,0.05));
-            background-size: 20px 35px; box-shadow: inset 4px 0 0 0 currentColor;
+            background-size: 20px 35px; box-shadow: inset 3px 0 0 0 currentColor;
         }
         
-        .rank-num { font-family: 'Impact', sans-serif; font-size: 1.5rem; font-style: italic; }
-        .pilot-name { font-weight: bold; color: #fff; font-size: 1.1rem; }
-        /* Player ID Style */
-        .pilot-id { display: block; font-size: 0.65rem; color: #666; font-weight: normal; letter-spacing: 1px; margin-top: 2px;}
-        
-        .total-score { font-weight: bold; color: var(--eva-green); font-size: 1.2rem; font-family: 'Impact', sans-serif; }
+        .rank-num { font-family: 'Impact', sans-serif; font-size: 1.3rem; font-style: italic; }
+        .pilot-name { font-weight: bold; color: #fff; font-size: 1rem; line-height: 1.1; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+        .pilot-id { font-size: 0.6rem; color: #777; font-weight: normal; letter-spacing: 0.5px; margin-top: 2px; font-family: monospace;}
+        .total-score { font-weight: bold; color: var(--eva-green); font-size: 1.1rem; font-family: 'Impact', sans-serif; }
+        .cup-result { font-size: 0.8rem; font-weight: bold; line-height: 1.1; white-space: normal;} /* 允許成績換行 */
         
         .text-platinum { color: var(--color-platinum); }
         .text-gold { color: var(--color-gold); }
@@ -146,14 +152,22 @@
 
         tbody.list-view tr:hover td { background: rgba(255,255,255,0.15); }
 
-        @media (max-width: 768px) {
-            tbody.list-view td:nth-child(4), tbody.list-view th:nth-child(4) { display: none; }
-            tbody.list-view td { padding: 10px 5px; }
-            table { min-width: 100%; }
+        /* 手機版欄位顯示調整 */
+        @media (max-width: 600px) {
+            /* 強制顯示所有欄位，但縮小字體 */
+            thead th:nth-child(1) { width: 15%; } /* Rank */
+            thead th:nth-child(2) { width: 35%; } /* Pilot */
+            thead th:nth-child(3) { width: 20%; } /* Sync */
+            thead th:nth-child(4) { width: 30%; } /* Latest */
+            
+            .rank-num { font-size: 1.1rem; }
+            .pilot-name { font-size: 0.9rem; }
+            .total-score { font-size: 1rem; }
+            .cup-result { font-size: 0.7rem; } /* 成績字體縮小 */
         }
 
         /* === Card View === */
-        tbody.card-view { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 10px; }
+        tbody.card-view { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 10px; }
         tbody.card-view tr {
             display: flex; flex-wrap: wrap; width: 100%; max-width: 450px;
             margin: 0; padding: 0; background: rgba(25,25,30,0.9);
@@ -163,24 +177,27 @@
         tbody.card-view tr:active { transform: scale(0.98); }
 
         tbody.card-view td:nth-of-type(1) { 
-            width: 20%; font-size: 2.2rem; text-align: center; 
+            width: 20%; font-size: 2rem; text-align: center; 
             display: flex; align-items: center; justify-content: center;
             background-image: linear-gradient(30deg, #000 12%, transparent 12.5%, transparent 87%, #000 87.5%, #000), linear-gradient(60deg, rgba(255,255,255,0.05) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.05) 75%, rgba(255,255,255,0.05));
-            background-size: 20px 35px; box-shadow: inset 6px 0 0 0 currentColor; padding: 20px 0;
+            background-size: 20px 35px; box-shadow: inset 5px 0 0 0 currentColor; padding: 15px 0;
         }
         tbody.card-view td:nth-of-type(2) { 
-            width: 75%; font-size: 1.4rem; border-bottom: 1px solid #444 !important; 
-            margin: 10px 0 5px 5px; background: none !important; text-align: left; padding-left: 10px;
+            width: 75%; font-size: 1.2rem; border-bottom: 1px solid #444 !important; 
+            margin: 8px 0 5px 5px; background: none !important; text-align: left; padding-left: 10px;
+            align-items: flex-start; justify-content: center;
         }
+        tbody.card-view .pilot-name { align-items: flex-start; } /* Card view 左對齊 */
+        
         tbody.card-view td:nth-of-type(3) { 
             width: 100%; margin: 0; padding: 5px 15px; display: flex; justify-content: space-between; align-items: center;
             background: rgba(0,0,0,0.3) !important; border-bottom: 1px dashed #444 !important;
         }
         tbody.card-view td:nth-of-type(3)::before { content: "TOTAL SYNC"; font-size: 0.8rem; color: #888; }
-        tbody.card-view td:nth-of-type(4) { display: none; }
+        tbody.card-view td:nth-of-type(4) { display: none; } /* Card view 不顯示最新成績 */
         tbody.card-view tr::after {
             content: "TAP FOR BATTLE LOG >>"; display: block; width: 100%; text-align: right;
-            font-size: 0.7rem; color: #555; padding: 5px 15px; letter-spacing: 1px;
+            font-size: 0.65rem; color: #555; padding: 5px 15px; letter-spacing: 1px;
         }
         .hide-header thead { display: none; }
 
@@ -190,17 +207,17 @@
             background-color: rgba(0,0,0,0.9); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 15px;
         }
         .modal-content {
-            background: #15151a; border: 2px solid var(--eva-purple); width: 100%; max-width: 420px; 
+            background: #15151a; border: 2px solid var(--eva-purple); width: 100%; max-width: 400px; 
             max-height: 90vh; display: flex; flex-direction: column;
-            padding: 25px; position: relative;
+            padding: 20px; position: relative;
             box-shadow: 0 0 40px var(--eva-purple); border-radius: 8px; animation: modalPop 0.3s;
         }
         @keyframes modalPop { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .close-modal { position: absolute; top: 10px; right: 15px; color: #888; font-size: 36px; cursor: pointer; padding: 10px; z-index: 10; }
+        .close-modal { position: absolute; top: 5px; right: 10px; color: #888; font-size: 32px; cursor: pointer; padding: 10px; z-index: 10; }
         
         .pilot-header { display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 15px; flex-shrink: 0; }
-        .p-rank { font-size: 4rem; font-family: 'Impact'; margin-right: 15px; line-height: 1; color: #fff; }
-        .p-name { font-size: 1.8rem; font-weight: bold; color: #fff; display: block; line-height: 1.2;}
+        .p-rank { font-size: 3.5rem; font-family: 'Impact'; margin-right: 15px; line-height: 1; color: #fff; }
+        .p-name { font-size: 1.6rem; font-weight: bold; color: #fff; display: block; line-height: 1.2;}
         .p-id-modal { font-size: 0.9rem; color: #666; font-family: monospace; display: block; margin-top: 3px; letter-spacing: 1px;}
 
         .battle-log-container {
@@ -208,28 +225,24 @@
             flex-grow: 1; overflow-y: auto; max-height: 250px; padding: 10px;
             scrollbar-width: thin; scrollbar-color: var(--eva-purple) #000;
         }
-        .battle-log-container::-webkit-scrollbar { width: 6px; }
-        .battle-log-container::-webkit-scrollbar-track { background: #000; }
-        .battle-log-container::-webkit-scrollbar-thumb { background: var(--eva-purple); border-radius: 3px; }
-
-        .log-title { font-size: 0.8rem; color: #888; border-bottom: 1px solid #444; margin-bottom: 10px; padding-bottom: 5px; letter-spacing: 2px; position: sticky; top:0; background: #08080a; }
-        .log-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;}
-        .log-cup { color: var(--eva-purple); font-weight: bold; font-size: 0.85rem; font-family: 'Arial Black', sans-serif; letter-spacing: 0.5px;}
+        .log-title { font-size: 0.75rem; color: #888; border-bottom: 1px solid #444; margin-bottom: 10px; padding-bottom: 5px; letter-spacing: 2px; position: sticky; top:0; background: #08080a; }
+        .log-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;}
+        .log-cup { color: var(--eva-purple); font-weight: bold; font-family: 'Arial Black', sans-serif; letter-spacing: 0.5px;}
         
         .eva-quote-box {
-            padding: 15px; background: rgba(255, 153, 0, 0.05); border-left: 4px solid var(--eva-orange);
-            text-align: center; margin-bottom: 10px; flex-shrink: 0; position: relative;
+            padding: 12px; background: rgba(255, 153, 0, 0.05); border-left: 4px solid var(--eva-orange);
+            text-align: center; margin-bottom: 5px; flex-shrink: 0; position: relative;
         }
-        .quote-cn { display: block; font-size: 1.25rem; color: #fff; font-weight: bold; margin-bottom: 8px; font-style: normal; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
-        .quote-jp { display: block; font-size: 0.85rem; color: #888; font-family: "MS Mincho", serif; margin-bottom: 10px; letter-spacing: 1px; }
-        .quote-source { display: block; text-align: right; font-size: 0.75rem; color: var(--eva-orange); font-weight: bold; margin-top: 5px; }
-        .quote-label { display: block; font-size: 0.6rem; color: #666; text-align: left; margin-bottom: 5px; letter-spacing: 2px; }
+        .quote-cn { display: block; font-size: 1.1rem; color: #fff; font-weight: bold; margin-bottom: 5px; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        .quote-jp { display: block; font-size: 0.75rem; color: #888; font-family: "MS Mincho", serif; margin-bottom: 5px; }
+        .quote-source { display: block; text-align: right; font-size: 0.7rem; color: var(--eva-orange); font-weight: bold; }
+        .quote-label { display: block; font-size: 0.5rem; color: #666; text-align: left; margin-bottom: 5px; letter-spacing: 2px; }
 
         .bottom-admin-panel {
             text-align: center; padding: 20px 0 40px 0; margin-top: auto;
             border-top: 1px solid #222; background: rgba(0,0,0,0.5);
         }
-        .footer-deco { text-align: center; font-size: 0.7rem; color: #555; padding: 10px; line-height: 1.5; }
+        .footer-deco { text-align: center; font-size: 0.65rem; color: #555; padding: 10px; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -295,8 +308,8 @@
                 <tr>
                     <th width="15%">RANK</th>
                     <th width="35%">PILOT</th>
-                    <th width="25%" class="th-total">TOTAL SYNC</th>
-                    <th width="25%">LATEST CUP</th>
+                    <th width="20%" class="th-total">SYNC</th>
+                    <th width="30%">LATEST</th>
                 </tr>
             </thead>
             <tbody id="tableBody" class="list-view">
@@ -310,12 +323,12 @@
     </div>
 
     <div class="bottom-admin-panel">
-        <div class="footer-deco">NERV TOKYO-3 // MAGI SYSTEM VER 24.0 // UTF-8 DECODED</div>
+        <div class="footer-deco">NERV TOKYO-3 // MAGI SYSTEM VER 26.0 // MOBILE OPTIMIZED</div>
     </div>
 
     <script>
         // =========================================================
-        // 🌟 已整合您的 Google Sheet 連結
+        // 🌟 Google Sheet CSV URL
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT40Ezc3eu9HtyGZL5bFHuNudksoBz7gVGXycPyGD22vZB2MxO7mCSXVTz-roAUpckS1pZy3dBE9jTy/pub?gid=2080286926&single=true&output=csv"; 
         // =========================================================
 
@@ -347,20 +360,15 @@
         };
 
         function fetchGoogleSheetData() {
-            // 加入時間戳記避免快取
             const urlWithCacheBust = GOOGLE_SHEET_CSV_URL + "&t=" + Date.now();
-            
             fetch(urlWithCacheBust)
                 .then(response => {
                     if (!response.ok) throw new Error("Network response was not ok");
-                    return response.arrayBuffer(); // 先取回原始二進位資料
+                    return response.arrayBuffer();
                 })
                 .then(data => {
-                    // ⚠️ 強制使用 UTF-8 解碼，解決 Google Sheets 中文亂碼問題
                     const decoder = new TextDecoder("utf-8");
                     const csvString = decoder.decode(data);
-                    
-                    // 解析解碼後的字串
                     const workbook = XLSX.read(csvString, {type: 'string'});
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                     const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
@@ -379,175 +387,6 @@
         }
 
         function processData(rawData) {
-            // A欄(0): ID
-            // B欄(1): 姓名
-            // C欄(2): 級別
-            // D欄(3): 積分
-            // E欄(4)以後: 各屆戰績
+            // A=ID, B=Name, C=Tier, D=Score, E=History
             let pilots = rawData.map(row => {
-                if (!row || row.length === 0) return null;
-                
-                let history = [];
-                // 歷史成績從 E 欄 (index 4) 開始
-                if (row.length > 4) {
-                    for(let i = 4; i < row.length; i++) {
-                        if(row[i] !== undefined && row[i] !== null && row[i].toString().trim() !== "") {
-                            history.push(row[i]);
-                        }
-                    }
-                }
-
-                return {
-                    id: row[0] || "UNK",
-                    name: row[1] || "UNKNOWN",
-                    tier: row[2] || "青銅級", 
-                    score: typeof row[3] === 'number' ? row[3] : parseInt(row[3]) || 0,
-                    history: history 
-                };
-            }).filter(item => item !== null && item.name !== "UNKNOWN");
-
-            // 依積分排序
-            pilots.sort((a, b) => b.score - a.score);
-            renderTable(pilots);
-            
-            document.getElementById('loadingOverlay').style.display = 'none';
-            systemStatus.innerText = `SYNC COMPLETE // ${pilots.length} PILOTS LOADED`;
-        }
-
-        function renderTable(pilots) {
-            tableBody.innerHTML = "";
-            pilots.forEach((p, index) => {
-                const tr = document.createElement('tr');
-                const rank = index + 1;
-                
-                let tierClass = "bronze";
-                let textClass = "text-bronze";
-                const tierStr = p.tier ? p.tier.toString() : "";
-                if (tierStr.indexOf("白金") > -1) { tierClass = "platinum"; textClass = "text-platinum"; }
-                else if (tierStr.indexOf("黃金") > -1) { tierClass = "gold"; textClass = "text-gold"; }
-                else if (tierStr.indexOf("白銀") > -1) { tierClass = "silver"; textClass = "text-silver"; }
-
-                tr.className = `row-${tierClass}`;
-                tr.setAttribute('data-tier', tierClass);
-                
-                tr.dataset.pilotData = JSON.stringify({
-                    rank: rank < 10 ? `0${rank}` : rank,
-                    id: p.id,
-                    name: p.name,
-                    score: p.score,
-                    history: p.history,
-                    tierClass: tierClass
-                });
-                
-                tr.onclick = function() { openCard(this); };
-
-                let lastResult = (p.history && p.history.length > 0) ? p.history[0] : "-";
-
-                tr.innerHTML = `
-                    <td class="rank-num ${textClass}">${rank < 10 ? `0${rank}` : rank}</td>
-                    <td class="pilot-name">
-                        ${p.name}
-                        <span class="pilot-id">ID: ${p.id}</span>
-                    </td>
-                    <td class="total-score">${p.score}</td>
-                    <td class="cup-result ${textClass}">${lastResult}</td>
-                `;
-                tableBody.appendChild(tr);
-            });
-        }
-
-        function searchPilot() {
-            let input = document.getElementById("searchInput").value.toUpperCase();
-            let rows = document.querySelectorAll("tbody tr");
-            let activeBtn = document.querySelector(".filter-btn.active");
-            let currentTier = 'all';
-            if (activeBtn.classList.contains("btn-plat")) currentTier = 'platinum';
-            else if (activeBtn.classList.contains("btn-gold")) currentTier = 'gold';
-            else if (activeBtn.classList.contains("btn-silver")) currentTier = 'silver';
-            else if (activeBtn.classList.contains("btn-bronze")) currentTier = 'bronze';
-
-            rows.forEach(row => {
-                if(row.dataset.pilotData) {
-                    let data = JSON.parse(row.dataset.pilotData);
-                    // 支援搜尋 姓名 或 ID
-                    let matchSearch = data.name.toUpperCase().includes(input) || data.id.toString().toUpperCase().includes(input);
-                    let matchTier = (currentTier === 'all') || (row.getAttribute("data-tier") === currentTier);
-                    row.style.display = (matchSearch && matchTier) ? "" : "none";
-                }
-            });
-        }
-
-        function filterTier(tier) {
-            document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
-            let btnClass = tier === 'all' ? '.btn-all' : (tier === 'platinum' ? '.btn-plat' : (tier === 'gold' ? '.btn-gold' : (tier === 'silver' ? '.btn-silver' : '.btn-bronze')));
-            document.querySelector(btnClass).classList.add("active");
-
-            if (tier === 'all') {
-                tableBody.classList.remove("card-view");
-                tableBody.classList.add("list-view");
-                document.getElementById("ladderTable").classList.remove("hide-header");
-                systemStatus.innerText = "SOLAR CUP // CUMULATIVE RANKING";
-            } else {
-                tableBody.classList.remove("list-view");
-                tableBody.classList.add("card-view");
-                document.getElementById("ladderTable").classList.add("hide-header");
-                systemStatus.innerText = "SOLAR CUP // DIVISION VIEW";
-            }
-            searchPilot();
-        }
-
-        function openCard(row) {
-            const data = JSON.parse(row.dataset.pilotData);
-
-            document.getElementById("mRank").innerText = data.rank;
-            document.getElementById("mName").innerText = data.name;
-            document.getElementById("mId").innerText = `ID: ${data.id}`;
-            document.getElementById("mScore").innerText = data.score;
-
-            const historyList = document.getElementById("mHistoryList");
-            historyList.innerHTML = ""; 
-            
-            if (!data.history || data.history.length === 0) {
-                historyList.innerHTML = `<div class="log-row" style="color:#666; justify-content:center;">NO DATA</div>`;
-            } else {
-                data.history.forEach((result, index) => {
-                    const cupName = `SOLAR CUP ${getCupName(index)}`;
-                    const div = document.createElement("div");
-                    div.className = "log-row";
-                    let opacity = 1 - (index * 0.15);
-                    if (opacity < 0.3) opacity = 0.3;
-                    div.style.opacity = opacity;
-                    
-                    div.innerHTML = `<span class="log-cup">${cupName}</span><span style="color:#fff;">${result}</span>`;
-                    historyList.appendChild(div);
-                });
-            }
-
-            const q = evaQuotes[Math.floor(Math.random() * evaQuotes.length)];
-            document.getElementById("mQuoteJP").innerText = q.jp;
-            document.getElementById("mQuoteCN").innerText = q.cn;
-            document.getElementById("mQuoteSource").innerText = `—— ${q.source}`;
-
-            let colorVar = "#fff";
-            if (data.tierClass === "platinum") colorVar = "var(--color-platinum)";
-            else if (data.tierClass === "gold") colorVar = "var(--color-gold)";
-            else if (data.tierClass === "silver") colorVar = "var(--color-silver)";
-            else if (data.tierClass === "bronze") colorVar = "var(--color-bronze)";
-            
-            document.getElementById("modalCard").style.borderColor = colorVar;
-            document.getElementById("modalCard").style.boxShadow = `0 0 30px ${colorVar}`;
-            
-            document.body.style.overflow = 'hidden'; 
-            document.getElementById("playerModal").style.display = "flex";
-        }
-
-        function closeModal() {
-            document.body.style.overflow = '';
-            document.getElementById("playerModal").style.display = "none";
-        }
-        window.onclick = function(event) {
-            if (event.target == document.getElementById("playerModal")) closeModal();
-        }
-    </script>
-</body>
-</html>
+                if (!row || row.length
