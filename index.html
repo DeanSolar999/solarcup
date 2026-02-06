@@ -40,14 +40,15 @@
 
         /* === Loading Overlay === */
         #loadingOverlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 9999;
             align-items: center; justify-content: center; flex-direction: column;
         }
         .loader-text {
             color: var(--eva-orange); font-family: 'Impact'; font-size: 2rem; letter-spacing: 2px;
-            animation: blink 0.5s infinite alternate;
+            animation: blink 0.5s infinite alternate; text-align: center;
         }
+        .loader-sub { color: #666; font-size: 0.8rem; margin-top:10px; letter-spacing: 1px; }
         @keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
 
         /* === Sticky Header === */
@@ -63,7 +64,7 @@
         .title-card {
             font-family: "MS Mincho", "SimSun", serif;
             font-weight: 900; text-align: center; 
-            font-size: 2.5rem; letter-spacing: 0.1em; color: #fff; padding-top: 15px;
+            font-size: 2.2rem; letter-spacing: 0.1em; color: #fff; padding-top: 15px;
             text-shadow: 0 0 10px var(--eva-purple); line-height: 1.2;
         }
         .sub-title {
@@ -71,7 +72,7 @@
             letter-spacing: 3px; margin-bottom: 10px; opacity: 0.8; font-weight: bold;
         }
 
-        /* Filter Buttons (Horizontal Scroll) */
+        /* Filter Buttons */
         .filter-container { width: 100%; overflow-x: auto; padding: 0 10px; -webkit-overflow-scrolling: touch; }
         .filter-group { display: flex; justify-content: center; gap: 8px; margin: 5px 0; white-space: nowrap; min-width: max-content; }
         @media (max-width: 600px) {
@@ -124,18 +125,18 @@
             font-size: 1rem; color: #ddd; vertical-align: middle; cursor: pointer;
         }
 
-        /* List View Hexagon Pattern */
+        /* List View */
         tbody.list-view td:first-child {
             position: relative;
-            background-image: 
-                linear-gradient(30deg, #000 12%, transparent 12.5%, transparent 87%, #000 87.5%, #000),
-                linear-gradient(150deg, #000 12%, transparent 12.5%, transparent 87%, #000 87.5%, #000),
-                linear-gradient(60deg, rgba(255,255,255,0.05) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.05) 75%, rgba(255,255,255,0.05));
+            background-image: linear-gradient(30deg, #000 12%, transparent 12.5%, transparent 87%, #000 87.5%, #000), linear-gradient(150deg, #000 12%, transparent 12.5%, transparent 87%, #000 87.5%, #000), linear-gradient(60deg, rgba(255,255,255,0.05) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.05) 75%, rgba(255,255,255,0.05));
             background-size: 20px 35px; box-shadow: inset 4px 0 0 0 currentColor;
         }
         
         .rank-num { font-family: 'Impact', sans-serif; font-size: 1.5rem; font-style: italic; }
         .pilot-name { font-weight: bold; color: #fff; font-size: 1.1rem; }
+        /* Player ID Style */
+        .pilot-id { display: block; font-size: 0.65rem; color: #666; font-weight: normal; letter-spacing: 1px; margin-top: 2px;}
+        
         .total-score { font-weight: bold; color: var(--eva-green); font-size: 1.2rem; font-family: 'Impact', sans-serif; }
         
         .text-platinum { color: var(--color-platinum); }
@@ -176,7 +177,6 @@
             background: rgba(0,0,0,0.3) !important; border-bottom: 1px dashed #444 !important;
         }
         tbody.card-view td:nth-of-type(3)::before { content: "TOTAL SYNC"; font-size: 0.8rem; color: #888; }
-        
         tbody.card-view td:nth-of-type(4) { display: none; }
         tbody.card-view tr::after {
             content: "TAP FOR BATTLE LOG >>"; display: block; width: 100%; text-align: right;
@@ -184,7 +184,7 @@
         }
         .hide-header thead { display: none; }
 
-        /* === 4. Modal (Player Card) === */
+        /* === Modal === */
         .modal {
             display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.9); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 15px;
@@ -201,8 +201,8 @@
         .pilot-header { display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 15px; flex-shrink: 0; }
         .p-rank { font-size: 4rem; font-family: 'Impact'; margin-right: 15px; line-height: 1; color: #fff; }
         .p-name { font-size: 1.8rem; font-weight: bold; color: #fff; display: block; line-height: 1.2;}
+        .p-id-modal { font-size: 0.9rem; color: #666; font-family: monospace; display: block; margin-top: 3px; letter-spacing: 1px;}
 
-        /* Scrollable Battle Log */
         .battle-log-container {
             background: #08080a; border: 1px solid #333; border-radius: 4px; margin-bottom: 15px;
             flex-grow: 1; overflow-y: auto; max-height: 250px; padding: 10px;
@@ -216,53 +216,19 @@
         .log-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;}
         .log-cup { color: var(--eva-purple); font-weight: bold; font-size: 0.85rem; font-family: 'Arial Black', sans-serif; letter-spacing: 0.5px;}
         
-        /* Bilingual Quote Box (Design Update) */
         .eva-quote-box {
             padding: 15px; background: rgba(255, 153, 0, 0.05); border-left: 4px solid var(--eva-orange);
             text-align: center; margin-bottom: 10px; flex-shrink: 0; position: relative;
         }
-        /* 中文：主標題 */
-        .quote-cn { 
-            display: block; font-size: 1.25rem; color: #fff; 
-            font-weight: bold; margin-bottom: 8px; font-style: normal; text-shadow: 0 0 5px rgba(0,0,0,0.5);
-        }
-        /* 日文：副標題 */
-        .quote-jp { 
-            display: block; font-size: 0.85rem; color: #888; 
-            font-family: "MS Mincho", serif; margin-bottom: 10px; letter-spacing: 1px;
-        }
+        .quote-cn { display: block; font-size: 1.25rem; color: #fff; font-weight: bold; margin-bottom: 8px; font-style: normal; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        .quote-jp { display: block; font-size: 0.85rem; color: #888; font-family: "MS Mincho", serif; margin-bottom: 10px; letter-spacing: 1px; }
         .quote-source { display: block; text-align: right; font-size: 0.75rem; color: var(--eva-orange); font-weight: bold; margin-top: 5px; }
         .quote-label { display: block; font-size: 0.6rem; color: #666; text-align: left; margin-bottom: 5px; letter-spacing: 2px; }
 
-        /* === Bottom Admin Panel (Direct Upload) === */
         .bottom-admin-panel {
-            text-align: center;
-            padding: 20px 0 40px 0;
-            margin-top: auto;
-            border-top: 1px solid #222;
-            background: rgba(0,0,0,0.5);
+            text-align: center; padding: 20px 0 40px 0; margin-top: auto;
+            border-top: 1px solid #222; background: rgba(0,0,0,0.5);
         }
-        
-        .admin-btn {
-            background: transparent;
-            color: #444;
-            border: 1px solid #333;
-            font-size: 0.7rem;
-            padding: 8px 15px;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .admin-btn:hover {
-            color: var(--eva-green);
-            border-color: var(--eva-green);
-            box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
-        }
-
-        #excelInput { display: none; }
-
         .footer-deco { text-align: center; font-size: 0.7rem; color: #555; padding: 10px; line-height: 1.5; }
     </style>
 </head>
@@ -270,7 +236,7 @@
 
     <div id="loadingOverlay">
         <div class="loader-text">MAGI SYSTEM PROCESSING...</div>
-        <div style="color:#666; font-size: 0.8rem; margin-top:10px;">ANALYZING EXCEL DATA STRUCTURE</div>
+        <div class="loader-sub">CONNECTING TO SOLAR DATABASE...</div>
     </div>
 
     <div id="playerModal" class="modal">
@@ -281,14 +247,14 @@
                 <div id="mRank" class="p-rank">01</div>
                 <div class="p-info">
                     <span id="mName" class="p-name">NAME</span>
+                    <span id="mId" class="p-id-modal">ID: P-001</span>
                     <span style="font-size: 0.8rem; color: var(--eva-green); letter-spacing: 1px;">TOTAL SYNC: <span id="mScore" style="color:#fff; font-size:1.4rem; font-weight:bold;">400</span></span>
                 </div>
             </div>
 
             <div class="battle-log-container">
                 <div class="log-title">BATTLE LOG (歷史戰績)</div>
-                <div id="mHistoryList">
-                    </div>
+                <div id="mHistoryList"></div>
             </div>
 
             <div class="eva-quote-box">
@@ -317,7 +283,7 @@
         </div>
 
         <div class="search-box">
-            <input type="text" id="searchInput" onkeyup="searchPilot()" placeholder="輸入選手名稱搜尋 (SEARCH)...">
+            <input type="text" id="searchInput" onkeyup="searchPilot()" placeholder="輸入選手名稱或編號搜尋 (SEARCH)...">
         </div>
     </div>
 
@@ -336,7 +302,7 @@
             <tbody id="tableBody" class="list-view">
                 <tr>
                     <td colspan="4" style="padding: 50px; color: #666; font-style: italic;">
-                        NO DATA LOADED.<br>PLEASE UPLOAD EXCEL FILE TO INITIALIZE MAGI SYSTEM.
+                        WAITING FOR MAGI CONNECTION...
                     </td>
                 </tr>
             </tbody>
@@ -344,16 +310,18 @@
     </div>
 
     <div class="bottom-admin-panel">
-        <div class="footer-deco">NERV TOKYO-3 // MAGI SYSTEM VER 19.0 // SOLAR CUP MOBILE</div>
-        <input type="file" id="excelInput" accept=".xlsx, .xls" />
-        <button class="admin-btn" onclick="document.getElementById('excelInput').click()">📂 初始化數據鏈接 (UPLOAD DATA)</button>
+        <div class="footer-deco">NERV TOKYO-3 // MAGI SYSTEM VER 22.0 // ID SYSTEM ONLINE</div>
     </div>
 
     <script>
+        // =========================================================
+        // ⚠️⚠️⚠️ 關鍵設定：請更新您的 Google Sheet CSV 連結 ⚠️⚠️⚠️
+        const GOOGLE_SHEET_CSV_URL = "請將您的_GOOGLE_SHEET_CSV_連結貼在這裡"; 
+        // =========================================================
+
         const tableBody = document.getElementById("tableBody");
         const systemStatus = document.getElementById("systemStatus");
         
-        // Bilingual Quotes Database (EVA Characters) - Chinese First
         const evaQuotes = [
             { jp: "逃げちゃダメだ。逃げちゃダメだ。", cn: "不能逃避。不能逃避。", source: "碇シンジ" },
             { jp: "笑えばいいと思うよ。", cn: "我認為你只要微笑就好了。", source: "碇シンジ" },
@@ -369,44 +337,55 @@
             { jp: "さようなら、全てのエヴァンゲリオン。", cn: "再見了，所有的福音戰士。", source: "真希波" }
         ];
 
-        // Cup Name Generator
         const cupNames = ["ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE"];
         function getCupName(index) {
             return cupNames[index] || `NO.${index + 1}`;
         }
 
-        // === Excel Handling ===
-        document.getElementById('excelInput').addEventListener('change', handleFile, false);
+        window.onload = function() {
+            if(GOOGLE_SHEET_CSV_URL.includes("請將您的")) {
+                alert("請記得編輯 HTML 檔案，貼上您的 Google Sheet CSV 連結！");
+                document.getElementById('loadingOverlay').style.display = 'none';
+                return;
+            }
+            fetchGoogleSheetData();
+        };
 
-        function handleFile(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            document.getElementById('loadingOverlay').style.display = 'flex';
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
+        function fetchGoogleSheetData() {
+            const urlWithCacheBust = GOOGLE_SHEET_CSV_URL + "&t=" + Date.now();
+            fetch(urlWithCacheBust)
+                .then(response => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.arrayBuffer();
+                })
+                .then(data => {
                     const workbook = XLSX.read(data, {type: 'array'});
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                     const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
-                    processData(jsonData.slice(1));
-                } catch(err) {
-                    alert("DATA ERROR: " + err.message);
+                    
+                    if(jsonData.length > 1) {
+                        processData(jsonData.slice(1));
+                    } else {
+                        throw new Error("No data found in sheet");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    systemStatus.innerText = "CONNECTION FAILED // PLEASE CHECK URL";
                     document.getElementById('loadingOverlay').style.display = 'none';
-                }
-            };
-            reader.readAsArrayBuffer(file);
+                });
         }
 
         function processData(rawData) {
-            // A=Name, B=Tier, C=Score, D...=Cups
+            // Updated Schema: A=ID, B=Name, C=Tier, D=Score, E...=Cups
+            // row[0]=ID, row[1]=Name, row[2]=Tier, row[3]=Score, row[4...]=History
             let pilots = rawData.map(row => {
                 if (!row || row.length === 0) return null;
                 
                 let history = [];
-                // Check if row has cup data starting from index 3
-                if (row.length > 3) {
-                    for(let i = 3; i < row.length; i++) {
+                // History starts from Column E (Index 4)
+                if (row.length > 4) {
+                    for(let i = 4; i < row.length; i++) {
                         if(row[i] !== undefined && row[i] !== null && row[i].toString().trim() !== "") {
                             history.push(row[i]);
                         }
@@ -414,20 +393,19 @@
                 }
 
                 return {
-                    name: row[0] || "UNKNOWN",
-                    tier: row[1] || "青銅級", 
-                    score: typeof row[2] === 'number' ? row[2] : parseInt(row[2]) || 0,
+                    id: row[0] || "UNK",
+                    name: row[1] || "UNKNOWN",
+                    tier: row[2] || "青銅級", 
+                    score: typeof row[3] === 'number' ? row[3] : parseInt(row[3]) || 0,
                     history: history 
                 };
             }).filter(item => item !== null && item.name !== "UNKNOWN");
 
             pilots.sort((a, b) => b.score - a.score);
             renderTable(pilots);
+            
             document.getElementById('loadingOverlay').style.display = 'none';
             systemStatus.innerText = `SYNC COMPLETE // ${pilots.length} PILOTS LOADED`;
-            
-            // Auto scroll to top to see results
-            window.scrollTo(0, 0);
         }
 
         function renderTable(pilots) {
@@ -448,6 +426,7 @@
                 
                 tr.dataset.pilotData = JSON.stringify({
                     rank: rank < 10 ? `0${rank}` : rank,
+                    id: p.id,
                     name: p.name,
                     score: p.score,
                     history: p.history,
@@ -456,28 +435,21 @@
                 
                 tr.onclick = function() { openCard(this); };
 
-                let lastResult = p.history.length > 0 ? p.history[0] : "-";
+                let lastResult = (p.history && p.history.length > 0) ? p.history[0] : "-";
 
                 tr.innerHTML = `
                     <td class="rank-num ${textClass}">${rank < 10 ? `0${rank}` : rank}</td>
-                    <td class="pilot-name">${p.name}</td>
+                    <td class="pilot-name">
+                        ${p.name}
+                        <span class="pilot-id">ID: ${p.id}</span>
+                    </td>
                     <td class="total-score">${p.score}</td>
                     <td class="cup-result ${textClass}">${lastResult}</td>
                 `;
                 tableBody.appendChild(tr);
             });
-            
-            const activeBtn = document.querySelector(".filter-btn.active");
-            if(activeBtn) {
-                if(activeBtn.classList.contains("btn-plat")) filterTier('platinum');
-                else if(activeBtn.classList.contains("btn-gold")) filterTier('gold');
-                else if(activeBtn.classList.contains("btn-silver")) filterTier('silver');
-                else if(activeBtn.classList.contains("btn-bronze")) filterTier('bronze');
-                else filterTier('all');
-            }
         }
 
-        // === Search & Filter ===
         function searchPilot() {
             let input = document.getElementById("searchInput").value.toUpperCase();
             let rows = document.querySelectorAll("tbody tr");
@@ -491,7 +463,8 @@
             rows.forEach(row => {
                 if(row.dataset.pilotData) {
                     let data = JSON.parse(row.dataset.pilotData);
-                    let matchSearch = data.name.toUpperCase().includes(input);
+                    // Match Name OR ID
+                    let matchSearch = data.name.toUpperCase().includes(input) || data.id.toString().toUpperCase().includes(input);
                     let matchTier = (currentTier === 'all') || (row.getAttribute("data-tier") === currentTier);
                     row.style.display = (matchSearch && matchTier) ? "" : "none";
                 }
@@ -517,18 +490,18 @@
             searchPilot();
         }
 
-        // === Modal Logic ===
         function openCard(row) {
             const data = JSON.parse(row.dataset.pilotData);
 
             document.getElementById("mRank").innerText = data.rank;
             document.getElementById("mName").innerText = data.name;
+            document.getElementById("mId").innerText = `ID: ${data.id}`;
             document.getElementById("mScore").innerText = data.score;
 
             const historyList = document.getElementById("mHistoryList");
             historyList.innerHTML = ""; 
             
-            if (data.history.length === 0) {
+            if (!data.history || data.history.length === 0) {
                 historyList.innerHTML = `<div class="log-row" style="color:#666; justify-content:center;">NO DATA</div>`;
             } else {
                 data.history.forEach((result, index) => {
@@ -544,7 +517,6 @@
                 });
             }
 
-            // Random Bilingual Quote with Source
             const q = evaQuotes[Math.floor(Math.random() * evaQuotes.length)];
             document.getElementById("mQuoteJP").innerText = q.jp;
             document.getElementById("mQuoteCN").innerText = q.cn;
