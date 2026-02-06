@@ -7,7 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         /* =========================================
-           EVA THEME & CORE STYLES
+           CORE STYLES
            ========================================= */
         :root {
             --eva-dark-bg: #0b0b0e;
@@ -96,11 +96,14 @@
             text-align: center; font-size: 0.9rem; border-radius: 4px;
         }
 
-        /* === Mobile Adjustments === */
+        /* === 重新規劃版面配置 (Layout Allocation) === */
+        
+        /* 1. Mobile & Desktop Widths */
         @media (max-width: 600px) {
             .title-card { font-size: 1.5rem; }
             .filter-group { justify-content: flex-start; }
-            /* List View Columns Mobile Widths */
+            
+            /* 🌟 List View 手機版寬度優化：給選手名稱更多空間 */
             th:nth-child(1) { width: 15% !important; } /* Rank */
             th:nth-child(2) { width: 60% !important; } /* Pilot */
             th:nth-child(3) { width: 25% !important; } /* Sync */
@@ -132,7 +135,7 @@
             overflow: hidden; text-overflow: ellipsis;
         }
 
-        /* === List View (總覽模式) === */
+        /* === List View (總覽) === */
         tbody.list-view td:first-child {
             position: relative;
             background-image: linear-gradient(30deg, #000 12%, transparent 12.5%, transparent 87%, #000 87.5%, #000), linear-gradient(150deg, #000 12%, transparent 12.5%, transparent 87%, #000 87.5%, #000), linear-gradient(60deg, rgba(255,255,255,0.05) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.05) 75%, rgba(255,255,255,0.05));
@@ -144,7 +147,7 @@
         .pilot-id { font-size: 0.65rem; color: #888; font-weight: normal; letter-spacing: 0.5px; margin-top: 2px; font-family: monospace; display: block;}
         .total-score { font-weight: bold; color: var(--eva-green); font-size: 1.2rem; font-family: 'Impact', sans-serif; }
         
-        /* 🌟 List View 中隱藏球團 */
+        /* 隱藏球團 (List View) */
         tbody.list-view .team-badge-container { display: none; }
 
         .text-platinum { color: var(--color-platinum); }
@@ -154,7 +157,7 @@
 
         tbody.list-view tr:hover td { background: rgba(255,255,255,0.15); }
 
-        /* === Card View (分組模式) === */
+        /* === Card View (分組) === */
         tbody.card-view { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 10px; }
         tbody.card-view tr {
             display: flex; flex-wrap: wrap; width: 100%; max-width: 450px;
@@ -164,7 +167,7 @@
         }
         tbody.card-view tr:active { transform: scale(0.98); }
 
-        /* 1. 排名 (左上) */
+        /* 左上：排名 */
         tbody.card-view td:nth-of-type(1) { 
             width: 20%; font-size: 2rem; text-align: center; 
             display: flex; align-items: center; justify-content: center;
@@ -172,34 +175,34 @@
             background-size: 20px 35px; box-shadow: inset 5px 0 0 0 currentColor; padding: 15px 0;
         }
         
-        /* 2. 姓名區 (右上) - 🌟 關鍵修改：Flex 佈局，讓球團靠最右 */
+        /* 右上：姓名 (Name Left) + 球團 (Team Right) */
         tbody.card-view td:nth-of-type(2) { 
             width: 75%; font-size: 1.3rem; border-bottom: 1px solid #444 !important; 
             margin: 10px 0 5px 5px; background: none !important; 
-            padding-left: 10px; padding-right: 10px;
-            display: flex; justify-content: space-between; align-items: center; /* 左右撐開 */
+            padding-left: 10px; padding-right: 15px; /* 右側留白給球團 */
+            display: flex; justify-content: space-between; align-items: center;
         }
         tbody.card-view .pilot-name { align-items: flex-start; text-align: left; }
         
-        /* 🌟 球團樣式 (只在 Card View 顯示) */
+        /* 🌟 球團樣式 (靠右) */
         tbody.card-view .team-badge-container {
-            display: block;
             font-size: 0.8rem; color: var(--eva-orange); 
             border: 1px solid var(--eva-orange);
-            padding: 2px 6px; border-radius: 4px;
-            white-space: nowrap;
-            margin-left: 10px;
+            padding: 2px 8px; border-radius: 4px;
+            white-space: nowrap; 
             background: rgba(255, 153, 0, 0.1);
+            font-weight: bold;
+            margin-left: 10px;
         }
 
-        /* 3. 總分 (左下) */
+        /* 左下：總分 */
         tbody.card-view td:nth-of-type(3) { 
             width: 50%; margin: 0; padding: 5px 15px; display: flex; flex-direction: column; justify-content: center; align-items: center;
             background: rgba(0,0,0,0.3) !important; border-top: 1px dashed #444 !important; border-right: 1px dashed #444;
         }
         tbody.card-view td:nth-of-type(3)::before { content: "TOTAL SYNC"; font-size: 0.6rem; color: #888; margin-bottom: 2px;}
 
-        /* 4. 最新戰績 (右下) */
+        /* 右下：最新戰績 */
         tbody.card-view td:nth-of-type(4) { 
             display: flex; 
             width: 50%; margin: 0; padding: 5px 15px; flex-direction: column; justify-content: center; align-items: center;
@@ -216,7 +219,7 @@
         }
         .hide-header thead { display: none; }
 
-        /* === Modal === */
+        /* === Modal (球員卡) === */
         .modal {
             display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.9); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 15px;
@@ -241,10 +244,15 @@
             scrollbar-width: thin; scrollbar-color: var(--eva-purple) #000;
         }
         .log-title { font-size: 0.75rem; color: #888; border-bottom: 1px solid #444; margin-bottom: 10px; padding-bottom: 5px; letter-spacing: 2px; position: sticky; top:0; background: #08080a; }
-        .log-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; align-items: center;}
+        .log-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; align-items: center;}
         
-        .log-cup-name { color: var(--eva-purple); font-weight: bold; font-family: 'Arial Black', sans-serif; letter-spacing: 0.5px; margin-right: 5px;}
-        .log-full-text { color: #fff; font-size: 0.95rem; }
+        /* 🌟 歷史戰績樣式調整 */
+        .log-cup-name { 
+            color: var(--eva-purple); font-weight: bold; font-family: 'Arial Black', sans-serif; 
+            letter-spacing: 0.5px; margin-right: 8px; min-width: 60px; display: inline-block; text-align: right;
+        }
+        .log-separator { color: #666; margin-right: 8px; }
+        .log-full-text { color: #fff; font-weight: bold; }
 
         .eva-quote-box {
             padding: 12px; background: rgba(255, 153, 0, 0.05); border-left: 4px solid var(--eva-orange);
@@ -339,7 +347,7 @@
     </div>
 
     <div class="bottom-admin-panel">
-        <div class="footer-deco">NERV TOKYO-3 // MAGI SYSTEM VER 33.0 // TEAM DISPLAY UPDATE</div>
+        <div class="footer-deco">NERV TOKYO-3 // MAGI SYSTEM VER 34.0 // LAYOUT RE-ALLOCATED</div>
     </div>
 
     <script>
@@ -475,18 +483,19 @@
                 let teamDisplay = p.team;
                 if(teamDisplay === "-" || teamDisplay === "0") teamDisplay = "";
 
-                // 姓名 HTML 結構：包含名字、ID，以及最右側的球團 Badge
+                // 姓名欄 HTML (包含球團)
                 let nameHtml = `
                     <div style="flex-grow:1;">
                         ${p.name}
                         <span class="pilot-id">${p.id}</span>
                     </div>
                 `;
+                // 只在 Card View (分組) 顯示球團
                 if(teamDisplay) {
                     nameHtml += `<div class="team-badge-container">${teamDisplay}</div>`;
                 }
 
-                // 總覽/分組 共用的 Latest Cup 顯示邏輯 (總覽時 CSS 會隱藏 td:4)
+                // 總覽/分組 共用的 Latest Cup 顯示邏輯
                 let rawResult = (p.history && p.history.length > 0) ? p.history[0] : "-";
                 let displayHTML = `<span style="color:#666;">-</span>`;
                 if (rawResult !== "-" && rawResult !== "#N/A") {
@@ -552,7 +561,7 @@
             document.getElementById("mName").innerText = data.name;
             document.getElementById("mId").innerText = `ID: ${data.id}`;
             document.getElementById("mScore").innerText = data.score;
-            // 🌟 移除球員卡上的球團顯示
+            // 🌟 Modal 不顯示球團 (如需求所述)
 
             const historyList = document.getElementById("mHistoryList");
             historyList.innerHTML = ""; 
@@ -567,9 +576,10 @@
                     
                     // 🌟 格式： ONE : 白金級 冠軍
                     div.innerHTML = `
-                        <div>
-                            <span class="log-cup-name">${cupName} : </span>
-                            <span class="log-full-text">${result}</span>
+                        <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+                            <span class="log-cup-name">${cupName}</span>
+                            <span class="log-separator">:</span>
+                            <span class="log-full-text" style="flex-grow:1; text-align:right;">${result}</span>
                         </div>
                     `;
                     historyList.appendChild(div);
