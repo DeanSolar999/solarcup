@@ -100,10 +100,10 @@
         @media (max-width: 600px) {
             .title-card { font-size: 1.5rem; }
             .filter-group { justify-content: flex-start; }
-            th:nth-child(1) { width: 15% !important; } /* Rank */
-            th:nth-child(2) { width: 35% !important; } /* Pilot */
-            th:nth-child(3) { width: 20% !important; } /* Sync */
-            th:nth-child(4) { width: 30% !important; } /* Latest */
+            th:nth-child(1) { width: 15% !important; }
+            th:nth-child(2) { width: 35% !important; }
+            th:nth-child(3) { width: 20% !important; }
+            th:nth-child(4) { width: 30% !important; }
         }
 
         /* === Table System === */
@@ -144,14 +144,16 @@
         .pilot-id { font-size: 0.65rem; color: #888; font-weight: normal; letter-spacing: 0.5px; margin-top: 2px; font-family: monospace; display: block;}
         .total-score { font-weight: bold; color: var(--eva-green); font-size: 1.2rem; font-family: 'Impact', sans-serif; }
         
-        /* ⚠️ 讓級別和戰績自動換行 ⚠️ */
         .cup-result { 
             font-size: 0.8rem; 
             font-weight: bold; 
-            white-space: normal; /* 允許換行 */
+            white-space: normal; 
             line-height: 1.2; 
             color: #ddd;
-        } 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .result-tier { font-size: 0.7rem; color: #aaa; margin-bottom: 2px; }
+        .result-rank { font-size: 0.9rem; color: #fff; }
         
         .text-platinum { color: var(--color-platinum); }
         .text-gold { color: var(--color-gold); }
@@ -316,7 +318,7 @@
     </div>
 
     <div class="bottom-admin-panel">
-        <div class="footer-deco">NERV TOKYO-3 // MAGI SYSTEM VER 28.0 // FORMATTING UPDATE</div>
+        <div class="footer-deco">NERV TOKYO-3 // MAGI SYSTEM VER 30.0 // SHARED RANK</div>
     </div>
 
     <script>
@@ -380,16 +382,13 @@
         }
 
         function processData(rawData) {
-            // A=ID, B=Name, C=Tier, D=Score, E=History
             let pilots = rawData.map(row => {
                 if (!row || row.length === 0) return null;
                 
                 let history = [];
-                // History starts from E (index 4)
                 if (row.length > 4) {
                     for(let i = 4; i < row.length; i++) {
                         if(row[i] !== undefined && row[i] !== null && row[i].toString().trim() !== "") {
-                            // Filter Excel Error #N/A
                             if(row[i].toString() === "#N/A") {
                                 history.push("-");
                             } else {
@@ -417,9 +416,19 @@
 
         function renderTable(pilots) {
             tableBody.innerHTML = "";
+            let currentRank = 1;
+
             pilots.forEach((p, index) => {
+                // 🌟🌟🌟 同分同名次邏輯 (Standard Competition Ranking) 🌟🌟🌟
+                // 如果目前分數 小於 上一個人的分數，名次 = index + 1
+                // 如果分數相同，名次維持不變 (currentRank)
+                if (index > 0 && p.score < pilots[index - 1].score) {
+                    currentRank = index + 1;
+                }
+                
                 const tr = document.createElement('tr');
-                const rank = index + 1;
+                // 格式化名次 (01, 02...)
+                const rankDisplay = currentRank < 10 ? `0${currentRank}` : currentRank;
                 
                 let tierClass = "bronze";
                 let textClass = "text-bronze";
@@ -432,7 +441,7 @@
                 tr.setAttribute('data-tier', tierClass);
                 
                 tr.dataset.pilotData = JSON.stringify({
-                    rank: rank < 10 ? `0${rank}` : rank,
+                    rank: rankDisplay,
                     id: p.id,
                     name: p.name,
                     score: p.score,
@@ -442,16 +451,24 @@
                 
                 tr.onclick = function() { openCard(this); };
 
-                let lastResult = (p.history && p.history.length > 0) ? p.history[0] : "-";
+                let rawResult = (p.history && p.history.length > 0) ? p.history[0] : "-";
+                let displayHTML = `<span style="color:#666;">-</span>`;
+
+                if (rawResult !== "-" && rawResult !== "#N/A") {
+                    displayHTML = `
+                        <div class="result-tier">${p.tier}</div>
+                        <div class="result-rank ${textClass}">${rawResult}</div>
+                    `;
+                }
 
                 tr.innerHTML = `
-                    <td class="rank-num ${textClass}">${rank < 10 ? `0${rank}` : rank}</td>
+                    <td class="rank-num ${textClass}">${rankDisplay}</td>
                     <td class="pilot-name">
                         ${p.name}
                         <span class="pilot-id">${p.id}</span>
                     </td>
                     <td class="total-score">${p.score}</td>
-                    <td class="cup-result ${textClass}">${lastResult}</td>
+                    <td class="cup-result">${displayHTML}</td>
                 `;
                 tableBody.appendChild(tr);
             });
