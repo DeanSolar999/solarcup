@@ -310,7 +310,7 @@
     </div>
 
     <div class="bottom-admin-panel">
-        <div class="footer-deco">NERV TOKYO-3 // MAGI SYSTEM VER 23.0 // ID SYSTEM ONLINE</div>
+        <div class="footer-deco">NERV TOKYO-3 // MAGI SYSTEM VER 24.0 // UTF-8 DECODED</div>
     </div>
 
     <script>
@@ -347,15 +347,21 @@
         };
 
         function fetchGoogleSheetData() {
-            // 加入時間戳，強制每次重新讀取，避免快取舊資料
+            // 加入時間戳記避免快取
             const urlWithCacheBust = GOOGLE_SHEET_CSV_URL + "&t=" + Date.now();
+            
             fetch(urlWithCacheBust)
                 .then(response => {
                     if (!response.ok) throw new Error("Network response was not ok");
-                    return response.arrayBuffer();
+                    return response.arrayBuffer(); // 先取回原始二進位資料
                 })
                 .then(data => {
-                    const workbook = XLSX.read(data, {type: 'array'});
+                    // ⚠️ 強制使用 UTF-8 解碼，解決 Google Sheets 中文亂碼問題
+                    const decoder = new TextDecoder("utf-8");
+                    const csvString = decoder.decode(data);
+                    
+                    // 解析解碼後的字串
+                    const workbook = XLSX.read(csvString, {type: 'string'});
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                     const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
                     
@@ -373,7 +379,6 @@
         }
 
         function processData(rawData) {
-            // 新資料結構對應：
             // A欄(0): ID
             // B欄(1): 姓名
             // C欄(2): 級別
