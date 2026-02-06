@@ -101,9 +101,9 @@
             .title-card { font-size: 1.5rem; }
             .filter-group { justify-content: flex-start; }
             th:nth-child(1) { width: 15% !important; }
-            th:nth-child(2) { width: 35% !important; }
-            th:nth-child(3) { width: 20% !important; }
-            th:nth-child(4) { width: 30% !important; }
+            th:nth-child(2) { width: 45% !important; } /* 增加姓名欄寬度 */
+            th:nth-child(3) { width: 25% !important; } /* 球團 */
+            th:nth-child(4) { width: 15% !important; } /* 分數 */
         }
 
         /* === Table System === */
@@ -142,19 +142,15 @@
         .rank-num { font-family: 'Impact', sans-serif; font-size: 1.3rem; font-style: italic; }
         .pilot-name { font-weight: bold; color: #fff; font-size: 1rem; line-height: 1.2; display: flex; flex-direction: column; align-items: center; justify-content: center;}
         .pilot-id { font-size: 0.65rem; color: #888; font-weight: normal; letter-spacing: 0.5px; margin-top: 2px; font-family: monospace; display: block;}
-        .total-score { font-weight: bold; color: var(--eva-green); font-size: 1.2rem; font-family: 'Impact', sans-serif; }
         
-        /* 列表模式下的戰績顯示 */
-        .cup-result { 
-            font-size: 0.8rem; 
-            font-weight: bold; 
-            white-space: normal; 
-            line-height: 1.2; 
-            color: #ddd;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        /* 球團樣式 */
+        .pilot-team { 
+            color: var(--eva-orange); font-size: 0.8rem; font-weight: bold; letter-spacing: 1px;
+            border: 1px solid #444; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.3);
+            display: inline-block;
         }
-        .result-tier { font-size: 0.7rem; color: #aaa; margin-bottom: 2px; }
-        .result-rank { font-size: 0.9rem; color: #fff; }
+
+        .total-score { font-weight: bold; color: var(--eva-green); font-size: 1.2rem; font-family: 'Impact', sans-serif; }
         
         .text-platinum { color: var(--color-platinum); }
         .text-gold { color: var(--color-gold); }
@@ -163,7 +159,7 @@
 
         tbody.list-view tr:hover td { background: rgba(255,255,255,0.15); }
 
-        /* === Card View (分組顯示) === */
+        /* === Card View === */
         tbody.card-view { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 10px; }
         tbody.card-view tr {
             display: flex; flex-wrap: wrap; width: 100%; max-width: 450px;
@@ -173,37 +169,37 @@
         }
         tbody.card-view tr:active { transform: scale(0.98); }
 
-        /* 左上：排名 (大圖) */
+        /* 左上：排名 */
         tbody.card-view td:nth-of-type(1) { 
             width: 20%; font-size: 2rem; text-align: center; 
             display: flex; align-items: center; justify-content: center;
             background-image: linear-gradient(30deg, #000 12%, transparent 12.5%, transparent 87%, #000 87.5%, #000), linear-gradient(60deg, rgba(255,255,255,0.05) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.05) 75%, rgba(255,255,255,0.05));
             background-size: 20px 35px; box-shadow: inset 5px 0 0 0 currentColor; padding: 15px 0;
         }
-        /* 右上：名字與ID */
+        /* 右上：名字、ID、球團 */
         tbody.card-view td:nth-of-type(2) { 
             width: 75%; font-size: 1.3rem; border-bottom: 1px solid #444 !important; 
             margin: 10px 0 5px 5px; background: none !important; text-align: left; padding-left: 10px;
-            align-items: flex-start; 
+            align-items: flex-start; display: flex; flex-direction: column; justify-content: center;
         }
         tbody.card-view .pilot-name { align-items: flex-start; }
         
-        /* 左下：總分 (50% 寬度) */
-        tbody.card-view td:nth-of-type(3) { 
-            width: 50%; margin: 0; padding: 5px 15px; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: rgba(0,0,0,0.3) !important; border-top: 1px dashed #444 !important; border-right: 1px dashed #444;
+        /* Card View 裡的球團顯示調整 */
+        .card-team-badge {
+            font-size: 0.75rem; color: var(--eva-orange); border: 1px solid var(--eva-orange);
+            padding: 1px 5px; margin-top: 5px; border-radius: 3px; display: inline-block;
         }
-        tbody.card-view td:nth-of-type(3)::before { content: "TOTAL SYNC"; font-size: 0.6rem; color: #888; margin-bottom: 2px;}
 
-        /* 右下：最新戰績 (50% 寬度) - 🌟 這裡修改為顯示 */
-        tbody.card-view td:nth-of-type(4) { 
-            display: flex; /* 改回 flex */
-            width: 50%; margin: 0; padding: 5px 15px; flex-direction: column; justify-content: center; align-items: center;
+        /* 下方：總分 (全寬) */
+        tbody.card-view td:nth-of-type(3) { 
+            width: 100%; margin: 0; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
             background: rgba(0,0,0,0.3) !important; border-top: 1px dashed #444 !important;
         }
-        tbody.card-view td:nth-of-type(4)::before { content: "LATEST CUP"; font-size: 0.6rem; color: #888; margin-bottom: 2px;}
+        tbody.card-view td:nth-of-type(3)::before { content: "TOTAL SYNC"; font-size: 0.8rem; color: #888; }
         
-        /* 底部提示 */
+        /* 隱藏第4欄 (球團欄位在List View是獨立的，但在Card View合併到名字裡，所以這裡隱藏) */
+        tbody.card-view td:nth-of-type(4) { display: none; }
+        
         tbody.card-view tr::after {
             content: "TAP FOR BATTLE LOG >>"; display: block; width: 100%; text-align: right;
             font-size: 0.65rem; color: #555; padding: 5px 15px; letter-spacing: 1px;
@@ -236,12 +232,11 @@
         }
         .log-title { font-size: 0.75rem; color: #888; border-bottom: 1px solid #444; margin-bottom: 10px; padding-bottom: 5px; letter-spacing: 2px; position: sticky; top:0; background: #08080a; }
         .log-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; align-items: center;}
-        .log-cup { color: var(--eva-purple); font-weight: bold; font-family: 'Arial Black', sans-serif; letter-spacing: 0.5px; width: 40%;}
-        /* 🌟 Modal 內的戰績顯示樣式 */
-        .log-result-box { text-align: right; width: 60%; line-height: 1.2;}
-        .log-tier { font-size: 0.7rem; color: #aaa; display: block; }
-        .log-rank { font-size: 1rem; color: #fff; font-weight: bold; }
         
+        /* 🌟 修改戰績顯示樣式 */
+        .log-cup-name { color: var(--eva-purple); font-weight: bold; font-family: 'Arial Black', sans-serif; letter-spacing: 0.5px; margin-right: 5px;}
+        .log-full-text { color: #fff; font-size: 0.95rem; }
+
         .eva-quote-box {
             padding: 12px; background: rgba(255, 153, 0, 0.05); border-left: 4px solid var(--eva-orange);
             text-align: center; margin-bottom: 5px; flex-shrink: 0; position: relative;
@@ -274,7 +269,8 @@
                 <div class="p-info">
                     <span id="mName" class="p-name">NAME</span>
                     <span id="mId" class="p-id-modal">ID: P-001</span>
-                    <span style="font-size: 0.8rem; color: var(--eva-green); letter-spacing: 1px;">TOTAL SYNC: <span id="mScore" style="color:#fff; font-size:1.4rem; font-weight:bold;">400</span></span>
+                    <span id="mTeam" style="color:var(--eva-orange); font-size:0.8rem; border:1px solid; padding:0 4px; border-radius:3px; margin-top:3px; display:inline-block;">TEAM</span>
+                    <div style="font-size: 0.8rem; color: var(--eva-green); letter-spacing: 1px; margin-top:5px;">TOTAL SYNC: <span id="mScore" style="color:#fff; font-size:1.4rem; font-weight:bold;">400</span></div>
                 </div>
             </div>
 
@@ -320,9 +316,9 @@
             <thead>
                 <tr>
                     <th width="15%">RANK</th>
-                    <th width="35%">PILOT</th>
+                    <th width="40%">PILOT</th>
+                    <th width="25%">TEAM</th>
                     <th width="20%" class="th-total">SYNC</th>
-                    <th width="30%">LATEST</th>
                 </tr>
             </thead>
             <tbody id="tableBody" class="list-view">
@@ -336,7 +332,7 @@
     </div>
 
     <div class="bottom-admin-panel">
-        <div class="footer-deco">NERV TOKYO-3 // MAGI SYSTEM VER 31.0 // CARD & MODAL UPDATE</div>
+        <div class="footer-deco">NERV TOKYO-3 // MAGI SYSTEM VER 32.0 // TEAM DATA ADDED</div>
     </div>
 
     <script>
@@ -400,12 +396,15 @@
         }
 
         function processData(rawData) {
+            // ⚠️ 欄位結構已變更：
+            // A[0]=ID, B[1]=Name, C[2]=Team(球團), D[3]=Tier, E[4]=Score, F[5]...=History
             let pilots = rawData.map(row => {
                 if (!row || row.length === 0) return null;
                 
                 let history = [];
-                if (row.length > 4) {
-                    for(let i = 4; i < row.length; i++) {
+                // History starts from F (index 5)
+                if (row.length > 5) {
+                    for(let i = 5; i < row.length; i++) {
                         if(row[i] !== undefined && row[i] !== null && row[i].toString().trim() !== "") {
                             if(row[i].toString() === "#N/A") {
                                 history.push("-");
@@ -419,8 +418,9 @@
                 return {
                     id: row[0] || "UNK",
                     name: row[1] || "UNKNOWN",
-                    tier: row[2] || "青銅級", 
-                    score: typeof row[3] === 'number' ? row[3] : parseInt(row[3]) || 0,
+                    team: row[2] || "-", // 新增球團欄位
+                    tier: row[3] || "青銅級", 
+                    score: typeof row[4] === 'number' ? row[4] : parseInt(row[4]) || 0,
                     history: history 
                 };
             }).filter(item => item !== null && item.name !== "UNKNOWN");
@@ -458,6 +458,7 @@
                     rank: rankDisplay,
                     id: p.id,
                     name: p.name,
+                    team: p.team,
                     score: p.score,
                     history: p.history,
                     tierClass: tierClass
@@ -465,25 +466,24 @@
                 
                 tr.onclick = function() { openCard(this); };
 
-                // 🌟 主畫面列表顯示 (合併目前級別+戰績)
-                let rawResult = (p.history && p.history.length > 0) ? p.history[0] : "-";
-                let displayHTML = `<span style="color:#666;">-</span>`;
+                // 處理球團顯示 (如果沒有球團或顯示-)
+                let teamDisplay = p.team;
+                if(teamDisplay === "-" || teamDisplay === "0") teamDisplay = "";
 
-                if (rawResult !== "-" && rawResult !== "#N/A") {
-                    displayHTML = `
-                        <div class="result-tier">${p.tier}</div>
-                        <div class="result-rank ${textClass}">${rawResult}</div>
-                    `;
+                // Card View 用的名字+球團 HTML
+                let nameHtml = `${p.name}<span class="pilot-id">${p.id}</span>`;
+                if(teamDisplay) {
+                    nameHtml += `<span class="card-team-badge">${teamDisplay}</span>`;
                 }
+
+                // List View 用的球團欄位
+                let listTeamHtml = teamDisplay ? `<span class="pilot-team">${teamDisplay}</span>` : `<span style="color:#444;">-</span>`;
 
                 tr.innerHTML = `
                     <td class="rank-num ${textClass}">${rankDisplay}</td>
-                    <td class="pilot-name">
-                        ${p.name}
-                        <span class="pilot-id">${p.id}</span>
-                    </td>
+                    <td class="pilot-name">${nameHtml}</td>
+                    <td class="cup-result">${listTeamHtml}</td>
                     <td class="total-score">${p.score}</td>
-                    <td class="cup-result">${displayHTML}</td>
                 `;
                 tableBody.appendChild(tr);
             });
@@ -535,6 +535,7 @@
             document.getElementById("mName").innerText = data.name;
             document.getElementById("mId").innerText = `ID: ${data.id}`;
             document.getElementById("mScore").innerText = data.score;
+            document.getElementById("mTeam").innerText = data.team !== "-" ? data.team : "";
 
             const historyList = document.getElementById("mHistoryList");
             historyList.innerHTML = ""; 
@@ -543,36 +544,17 @@
                 historyList.innerHTML = `<div class="log-row" style="color:#666; justify-content:center;">NO DATA</div>`;
             } else {
                 data.history.forEach((result, index) => {
-                    const cupName = `SOLAR CUP ${getCupName(index)}`;
+                    const cupName = getCupName(index); // 取得 "ONE", "TWO"
                     const div = document.createElement("div");
                     div.className = "log-row";
-                    let opacity = 1 - (index * 0.15);
-                    if (opacity < 0.3) opacity = 0.3;
-                    div.style.opacity = opacity;
                     
-                    // 🌟🌟🌟 Modal 戰績美化 (嘗試拆分級別與名次) 🌟🌟🌟
-                    // 這裡假設如果 Excel 有回傳 "白金級 冠軍" (中間有空格或純文字)，我們就直接顯示
-                    // 如果您之後在 Excel 公式裡把 D 欄改成 "級別+空格+名次"，這裡就會自動排版
-                    let resultHTML = `<span style="color:#fff;">${result}</span>`;
-                    
-                    // 簡單判斷：如果字串長度夠長，嘗試當作兩行處理
-                    if(result.length > 3 && result.includes(" ")) {
-                       let parts = result.split(" ");
-                       if(parts.length >= 2) {
-                           resultHTML = `
-                            <div class="log-result-box">
-                                <span class="log-tier">${parts[0]}</span>
-                                <span class="log-rank">${parts[1]}</span>
-                            </div>
-                           `;
-                       }
-                    } else if (result.length > 4) { 
-                        // 如果字很長但沒空格，例如"白金級冠軍"，直接強制斷行
-                        // 這裡比較難自動判斷，暫時維持原樣或您可以讓 Excel 輸出帶空格
-                         resultHTML = `<div class="log-result-box"><span class="log-rank" style="font-size:0.9rem;">${result}</span></div>`;
-                    }
-                    
-                    div.innerHTML = `<span class="log-cup">${cupName}</span>${resultHTML}`;
+                    // 🌟 格式： ONE : 白金級 冠軍
+                    div.innerHTML = `
+                        <div>
+                            <span class="log-cup-name">${cupName} : </span>
+                            <span class="log-full-text">${result}</span>
+                        </div>
+                    `;
                     historyList.appendChild(div);
                 });
             }
