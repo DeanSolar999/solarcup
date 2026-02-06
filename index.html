@@ -343,7 +343,7 @@
         }
 
         window.onload = function() {
-            if(GOOGLE_SHEET_CSV_URL.includes("請將您的")) {
+            if(GOOGLE_SHEET_CSV_URL.includes("https://docs.google.com/spreadsheets/d/e/2PACX-1vT40Ezc3eu9HtyGZL5bFHuNudksoBz7gVGXycPyGD22vZB2MxO7mCSXVTz-roAUpckS1pZy3dBE9jTy/pub?gid=2080286926&single=true&output=csv")) {
                 alert("請記得編輯 HTML 檔案，貼上您的 Google Sheet CSV 連結！");
                 document.getElementById('loadingOverlay').style.display = 'none';
                 return;
