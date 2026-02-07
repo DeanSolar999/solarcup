@@ -150,22 +150,18 @@
         .list-id { font-size: 0.65rem; color: #aaa; font-family: 'Orbitron', monospace; display: inline-block; margin-right: 5px; color: var(--eva-orange);}
         .list-score { font-family: 'Orbitron'; font-size: 1.3rem; color: var(--eva-green); text-align: center; letter-spacing: 1px; }
         
-        /* 球團徽章 (Team Badge) - 修正樣式 
-           移除固定橘色，改由 inline-style 控制顏色
-        */
         .team-badge {
             display: inline-block; 
-            font-size: 0.75rem; /* 字體加大 */
-            padding: 2px 8px; /* 增加內距 */
+            font-size: 0.75rem; 
+            padding: 2px 8px; 
             border-radius: 4px;
-            /* 預設邊框與顏色，會被 inline style 覆蓋 */
             border: 1px solid #555; 
             color: #888; 
             background: rgba(0, 0, 0, 0.3);
             font-weight: 900; 
             letter-spacing: 1px;
             vertical-align: middle;
-            text-shadow: 0 0 5px rgba(0,0,0,0.8); /* 增加文字可讀性 */
+            text-shadow: 0 0 5px rgba(0,0,0,0.8);
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
         }
 
@@ -305,7 +301,9 @@
         .history-list-content::-webkit-scrollbar-thumb { background: var(--eva-green); }
 
         .history-tag {
-            background: rgba(57, 255, 20, 0.1); border: 1px solid rgba(57, 255, 20, 0.3); color: var(--eva-green); padding: 2px 6px; border-radius: 2px; font-size: 0.65rem;
+            background: rgba(57, 255, 20, 0.1); border: 1px solid rgba(57, 255, 20, 0.3); color: var(--eva-green); 
+            padding: 2px 8px; /* 加寬內距 */
+            border-radius: 2px; font-size: 0.65rem;
         }
 
     </style>
@@ -380,17 +378,12 @@
             document.getElementById('loadingOverlay').style.display = 'none';
         }
 
-        /* === 新增功能：球團顏色產生器 ===
-           將球團名稱轉換成固定的 HSL 顏色，達到自動區隔效果
-        */
         function getTeamColor(name) {
             if (!name || name === '-') return '#888';
-            
             let hash = 0;
             for (let i = 0; i < name.length; i++) {
                 hash = name.charCodeAt(i) + ((hash << 5) - hash);
             }
-            // 使用 HSL: 色相由 hash 決定, 飽和度 85%, 亮度 65% (保持霓虹感且清晰)
             const hue = Math.abs(hash) % 360;
             return `hsl(${hue}, 85%, 65%)`;
         }
@@ -426,9 +419,8 @@
                 const tierName = p.tier.split(' ')[0]; 
                 const resultText = p.history.length > 0 ? `${tierName} ${latestHistory}` : "NO COMBAT DATA";
 
-                // === 取得球團動態顏色 ===
                 const teamColor = getTeamColor(p.team);
-                const teamBadgeStyle = `border-color:${teamColor}; color:${teamColor}; box-shadow: 0 0 8px ${teamColor}40;`; // 40 is hex opacity
+                const teamBadgeStyle = `border-color:${teamColor}; color:${teamColor}; box-shadow: 0 0 8px ${teamColor}40;`;
 
                 const tr = document.createElement("tr");
                 tr.className = `row-${tierKey}`;
@@ -569,11 +561,18 @@
             const s = p.score;
             const attrs = [Math.min(99, 60+(s%30)), Math.min(99, 50+(s%40)), Math.min(99, 70+(s%20)), Math.min(99, 55+(s%35))];
 
+            // 取得目前的級別名稱 (例如 "白金級")
+            const currentTierName = p.tier.split(' ')[0];
+
             let historyHTML = "";
             if (p.history && p.history.length > 0) {
                 historyHTML = p.history.map((record, index) => {
                     const cupName = `CUP-${String(index + 1).padStart(2, '0')}`;
-                    return `<div class="history-tag">${cupName}: ${record}</div>`;
+                    // 修正點：將級別名稱顯示在戰績中
+                    // 若 record 本身已包含級別則不重複顯示，否則補上
+                    const displayRecord = record.includes(currentTierName) ? record : `${currentTierName} ${record}`;
+                    
+                    return `<div class="history-tag">${cupName}: ${displayRecord}</div>`;
                 }).join("");
             } else {
                 historyHTML = `<span style="color:#555; font-style:italic;">NO COMBAT RECORD FOUND</span>`;
