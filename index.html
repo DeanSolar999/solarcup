@@ -334,7 +334,7 @@
                 <button class="filter-btn btn-bronze" onclick="filterTier('bronze')">BRONZE // 青銅級</button>
             </div>
         </div>
-        <div class="search-box"><input type="text" id="searchInput" onkeyup="searchPilot()" placeholder="搜尋 ID、姓名或球團..."></div>
+        <div class="search-box"><input type="text" id="searchInput" oninput="searchPilot()" placeholder="搜尋 ID、姓名或球團..."></div>
     </div>
 
     <div class="ladder-wrapper">
@@ -488,9 +488,10 @@
             searchPilot();
         }
 
+        /* 修正點：使用 trim() 去除空白，確保搜尋精準 */
         function searchPilot() {
             const inputVal = document.getElementById("searchInput").value;
-            const term = inputVal ? inputVal.toUpperCase() : "";
+            const term = inputVal ? inputVal.toUpperCase().trim() : "";
             const isListView = document.getElementById("tableBody").classList.contains("list-view");
 
             document.querySelectorAll("#tableBody tr").forEach(tr => {
@@ -561,15 +562,14 @@
             const s = p.score;
             const attrs = [Math.min(99, 60+(s%30)), Math.min(99, 50+(s%40)), Math.min(99, 70+(s%20)), Math.min(99, 55+(s%35))];
 
-            // 取得目前的級別名稱 (例如 "白金級")
+            // 修正點：取出當前級別名稱 (例如 "白金級")
             const currentTierName = p.tier.split(' ')[0];
 
             let historyHTML = "";
             if (p.history && p.history.length > 0) {
                 historyHTML = p.history.map((record, index) => {
                     const cupName = `CUP-${String(index + 1).padStart(2, '0')}`;
-                    // 修正點：將級別名稱顯示在戰績中
-                    // 若 record 本身已包含級別則不重複顯示，否則補上
+                    // 修正點：如果戰績文字中沒有級別，則補上級別
                     const displayRecord = record.includes(currentTierName) ? record : `${currentTierName} ${record}`;
                     
                     return `<div class="history-tag">${cupName}: ${displayRecord}</div>`;
