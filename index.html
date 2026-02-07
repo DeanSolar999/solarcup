@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>曜日天梯榜 - MAGI SYSTEM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;900&family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -22,294 +23,306 @@
         body {
             background-color: var(--eva-dark-bg);
             color: #fff;
-            font-family: 'Helvetica Neue', Arial, '微軟正黑體', sans-serif;
+            font-family: 'Noto Sans TC', sans-serif;
             margin: 0; padding: 0;
-            background-image: 
-                radial-gradient(circle at center, transparent 0%, #000 90%),
-                linear-gradient(0deg, rgba(157, 93, 242, 0.05) 1px, transparent 1px), 
-                linear-gradient(90deg, rgba(157, 93, 242, 0.05) 1px, transparent 1px);
-            background-size: 100% 100%, 30px 30px, 30px 30px;
             min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
         }
 
         /* === Loading === */
         #loadingOverlay {
             display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999; align-items: center; justify-content: center; flex-direction: column;
+            background: #000; z-index: 10000; align-items: center; justify-content: center; flex-direction: column;
         }
-        .loader-text { color: var(--eva-orange); font-family: 'Impact'; font-size: 2rem; animation: blink 0.5s infinite alternate; }
+        .loader-text { color: var(--eva-orange); font-family: 'Orbitron', sans-serif; font-size: 2rem; animation: blink 0.5s infinite alternate; }
         @keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
+
+        /* === Background Effects === */
+        .scanline-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%; pointer-events: none;
+        }
+        .tactical-grid-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+            background: linear-gradient(rgba(157, 93, 242, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(157, 93, 242, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px; transform: perspective(500px) rotateX(20deg) scale(1.5);
+            animation: gridMove 20s linear infinite; pointer-events: none;
+        }
+        @keyframes gridMove { 0% { background-position: 0 0; } 100% { background-position: 0 40px; } }
 
         /* === Header === */
         .sticky-controls {
             position: sticky; top: 0; z-index: 1000;
-            background: rgba(11, 11, 14, 0.98);
-            backdrop-filter: blur(15px);
-            border-bottom: 2px solid var(--eva-purple);
-            padding-bottom: 10px;
+            background: rgba(11, 11, 14, 0.98); backdrop-filter: blur(15px);
+            border-bottom: 2px solid var(--eva-purple); padding-bottom: 10px;
             box-shadow: 0 5px 25px rgba(0,0,0,0.8);
         }
-        
         .header-box {
-            padding: 15px 0 10px 0; margin-bottom: 10px; position: relative;
+            padding: 20px 0 15px 0; margin-bottom: 10px; position: relative;
             background: linear-gradient(0deg, rgba(157, 93, 242, 0.1) 0%, transparent 100%);
             border-top: 1px solid rgba(157, 93, 242, 0.3);
         }
         .title-card {
-            font-family: "MS Mincho", "SimSun", serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 0.2em;
-            color: #fff; text-align: center; text-shadow: 0 0 15px var(--eva-purple); margin: 0; line-height: 1.2;
+            font-family: 'Noto Sans TC', sans-serif;
+            font-size: 2.5rem; 
+            font-weight: 900; 
+            letter-spacing: 0.1em;
+            color: #fff; text-align: center; 
+            text-shadow: 2px 2px 0px #000, -1px -1px 0 var(--eva-purple), 0 0 20px var(--eva-purple);
+            margin: 0; line-height: 1;
+            transform: scaleY(1.1);
         }
         .sub-title {
-            font-size: 0.65rem; color: var(--eva-green); letter-spacing: 2px;
-            display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 5px; font-weight: bold;
+            font-family: 'Orbitron', sans-serif; font-size: 0.65rem; color: var(--eva-green); letter-spacing: 3px;
+            display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 8px; font-weight: bold;
         }
-        .sub-title::before, .sub-title::after { content: ""; display: block; width: 30px; height: 1px; background: var(--eva-green); box-shadow: 0 0 5px var(--eva-green); }
-        .deco-corner-text { position: absolute; font-family: monospace; font-size: 0.5rem; color: var(--eva-orange); opacity: 0.8; line-height: 1.2; }
+        .sub-title::before, .sub-title::after { content: ""; display: block; width: 40px; height: 2px; background: var(--eva-green); box-shadow: 0 0 5px var(--eva-green); }
+        .deco-corner-text { position: absolute; font-family: 'Orbitron', monospace; font-size: 0.5rem; color: var(--eva-orange); opacity: 0.8; line-height: 1.2; }
         .deco-tl { top: 8px; left: 15px; border-left: 2px solid var(--eva-orange); padding-left: 6px; }
         .deco-br { bottom: 8px; right: 15px; border-right: 2px solid var(--eva-orange); padding-right: 6px; text-align: right; }
 
         /* === Filters === */
         .filter-container { width: 100%; overflow-x: auto; padding: 5px 10px; }
-        .filter-group { display: flex; justify-content: center; gap: 8px; white-space: nowrap; padding-bottom: 5px;}
+        .filter-group { display: flex; justify-content: flex-start; gap: 10px; white-space: nowrap; padding-bottom: 5px; }
         .filter-btn {
             background: rgba(255,255,255,0.05); border: 1px solid #444; color: #888; 
-            padding: 8px 16px; cursor: pointer; font-size: 0.8rem; border-radius: 4px; transition: 0.2s;
+            padding: 10px 15px; cursor: pointer; font-size: 0.75rem; border-radius: 2px; transition: 0.2s;
+            flex: 0 0 auto; min-width: 90px; text-align: center; 
+            font-family: 'Orbitron', 'Noto Sans TC', sans-serif; font-weight: 700; letter-spacing: 1px;
         }
-        .filter-btn.active { color: #000 !important; font-weight: bold; transform: scale(1.05); border: none; }
-        .btn-all.active { background: #fff; box-shadow: 0 0 10px #fff; }
-        .btn-plat.active { background: var(--color-platinum); box-shadow: 0 0 15px var(--color-platinum); }
-        .btn-gold.active { background: var(--color-gold); box-shadow: 0 0 15px var(--color-gold); }
-        .btn-silver.active { background: var(--color-silver); box-shadow: 0 0 15px var(--color-silver); }
-        .btn-bronze.active { background: var(--color-bronze); box-shadow: 0 0 15px var(--color-bronze); }
+        .filter-btn.active { color: #000 !important; font-weight: 900; transform: scale(1.02); border: none; }
+        .btn-all.active { background: #fff; box-shadow: 0 0 8px #fff; }
+        .btn-plat.active { background: var(--color-platinum); box-shadow: 0 0 10px var(--color-platinum); }
+        .btn-gold.active { background: var(--color-gold); box-shadow: 0 0 10px var(--color-gold); }
+        .btn-silver.active { background: var(--color-silver); box-shadow: 0 0 10px var(--color-silver); }
+        .btn-bronze.active { background: var(--color-bronze); box-shadow: 0 0 10px var(--color-bronze); }
 
         .search-box { display: flex; justify-content: center; padding: 5px 15px; }
         #searchInput {
             background: rgba(0,0,0,0.6); border: 1px solid var(--eva-purple);
             color: #fff; padding: 12px; width: 100%; max-width: 600px;
-            text-align: center; border-radius: 30px; font-size: 0.9rem; outline: none; transition: 0.3s;
+            text-align: center; border-radius: 30px; font-size: 16px;
+            outline: none; transition: 0.3s;
+            font-family: 'Noto Sans TC', sans-serif;
         }
-        #searchInput:focus { border-color: var(--eva-green); }
+        #searchInput:focus { border-color: var(--eva-green); box-shadow: 0 0 10px rgba(57, 255, 20, 0.2); }
 
-        /* === List View (總覽) === */
-        .ladder-wrapper { max-width: 1200px; margin: 0 auto; padding: 10px 5px; }
-        table { width: 100%; border-spacing: 0 2px; border-collapse: separate; table-layout: fixed; }
+        /* === List View === */
+        .ladder-wrapper { max-width: 1200px; margin: 0 auto; padding: 10px 5px; position:relative; z-index:1; }
+        table { width: 100%; border-spacing: 0 4px; border-collapse: separate; table-layout: fixed; }
         
         thead th {
             color: #666; font-size: 0.65rem; padding: 10px 5px; text-transform: uppercase; 
-            background: #111; border-bottom: 2px solid #333;
+            background: rgba(17, 17, 17, 0.9); border-bottom: 2px solid #333; font-family: 'Orbitron', sans-serif;
         }
         
-        /* 欄位比例 */
-        .col-rank { width: 25%; text-align: center; } 
-        .col-pilot { width: 50%; text-align: left; padding-left: 10px; }
-        .col-sync { width: 25%; text-align: center; }
+        .col-rank { width: 15%; text-align: center; } 
+        .col-pilot { width: 65%; text-align: left; padding-left: 10px; }
+        .col-sync { width: 20%; text-align: center; }
 
-        tbody.list-view tr { background: var(--glass-bg); cursor: pointer; display: table-row; transition: background 0.2s; }
-        tbody.list-view tr:hover { background: rgba(157, 93, 242, 0.15); }
+        @media (max-width: 600px) {
+            .col-rank { width: 18%; }
+            .col-pilot { width: 60%; }
+            .col-sync { width: 22%; }
+        }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        tbody.list-view tr { background: var(--glass-bg); cursor: pointer; display: table-row; transition: 0.2s; animation: slideIn 0.4s both; }
+        tbody.list-view tr:hover { background: rgba(157, 93, 242, 0.15); transform: scale(1.01); }
         tbody.list-view td { padding: 12px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
         
-        /* === 2. 排名視覺強化系統 (Rank Badge System) === */
-        /* 這是基礎樣式，11-100名會用 JS 動態改變顏色 */
+        /* Rank Badge */
         .rank-badge-box {
-            display: inline-block;
-            width: 45px; height: 45px;
-            line-height: 45px;
-            text-align: center;
-            border-radius: 50%;
-            font-family: 'Impact';
-            transition: 0.3s;
-            /* 預設邊框與字體 */
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #888;
+            display: inline-block; width: 42px; height: 42px; line-height: 42px;
+            text-align: center; border-radius: 50%; font-family: 'Orbitron', sans-serif; transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1); color: #888;
         }
+        .rank-1-style { font-size: 1.8rem; color: #000; background: #ffd700; box-shadow: 0 0 15px #ffd700; border: 2px solid #fff; transform: scale(1.1); }
+        .rank-2-style { font-size: 1.5rem; color: #000; background: #e0e0e0; box-shadow: 0 0 10px #e0e0e0; border: 2px solid #888; }
+        .rank-3-style { font-size: 1.5rem; color: #000; background: #cd7f32; box-shadow: 0 0 10px #cd7f32; border: 2px solid #8B4513; }
+        .rank-top10-style { font-size: 1.4rem; color: #fff; font-style: italic; text-shadow: 0 0 8px rgba(255,255,255,0.8); width: auto; height: auto; border-radius: 0; border: none; }
 
-        /* NO.1 - NO.3 固定特殊樣式 */
-        .rank-1-style { 
-            font-size: 2rem; color: #000; background: #ffd700; 
-            box-shadow: 0 0 15px #ffd700, inset 0 0 5px #fff; border: 2px solid #fff; transform: scale(1.1);
-        }
-        .rank-2-style { 
-            font-size: 1.6rem; color: #000; background: #e0e0e0; 
-            box-shadow: 0 0 10px #e0e0e0; border: 2px solid #888;
-        }
-        .rank-3-style { 
-            font-size: 1.6rem; color: #000; background: #cd7f32; 
-            box-shadow: 0 0 10px #cd7f32; border: 2px solid #8B4513;
-        }
+        .list-name { font-weight: bold; font-size: 1rem; color: #fff; display: block; line-height: 1.2; }
+        .list-id { font-size: 0.65rem; color: #aaa; font-family: 'Orbitron', monospace; display: inline-block; margin-right: 5px; color: var(--eva-orange);}
+        .list-score { font-family: 'Orbitron'; font-size: 1.3rem; color: var(--eva-green); text-align: center; letter-spacing: 1px; }
         
-        /* Top 4-10 樣式 */
-        .rank-top10-style { 
-            font-size: 1.5rem; color: #fff; font-style: italic;
-            text-shadow: 0 0 8px rgba(255,255,255,0.8);
-            width: auto; height: auto; border-radius: 0; line-height: normal; border: none;
-        }
-
-        /* Pilot Info */
-        .list-name { font-weight: bold; font-size: 1rem; color: #fff; display: inline-block; vertical-align: middle;}
-        .list-id { font-size: 0.65rem; color: #555; font-family: monospace; display: block; margin-top: 2px; }
-        .list-score { font-family: 'Impact'; font-size: 1.3rem; color: var(--eva-green); text-align: center; letter-spacing: 1px; }
-        
+        /* 球團徽章 (Team Badge) - 修正樣式 
+           移除固定橘色，改由 inline-style 控制顏色
+        */
         .team-badge {
-            display: inline-block; font-size: 0.6rem; padding: 1px 6px; border-radius: 2px;
-            border: 1px solid var(--eva-orange); color: var(--eva-orange); 
-            background: rgba(255, 153, 0, 0.1); margin-left: 8px; vertical-align: middle;
-            font-weight: bold; letter-spacing: 0.5px;
+            display: inline-block; 
+            font-size: 0.75rem; /* 字體加大 */
+            padding: 2px 8px; /* 增加內距 */
+            border-radius: 4px;
+            /* 預設邊框與顏色，會被 inline style 覆蓋 */
+            border: 1px solid #555; 
+            color: #888; 
+            background: rgba(0, 0, 0, 0.3);
+            font-weight: 900; 
+            letter-spacing: 1px;
+            vertical-align: middle;
+            text-shadow: 0 0 5px rgba(0,0,0,0.8); /* 增加文字可讀性 */
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
         }
+
         tbody.list-view .card-only { display: none !important; }
 
-        /* === Card View (分組) === */
+        /* === Card View === */
         tbody.card-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; padding: 10px; }
         tbody.card-view tr { 
-            display: flex; flex-direction: column; 
-            background: var(--glass-bg); border-radius: 6px; position: relative;
-            padding: 15px; transition: 0.3s; height: auto; overflow: hidden;
-            backdrop-filter: blur(10px); border: 1px solid #333;
+            display: flex; flex-direction: column; background: var(--glass-bg); border-radius: 6px; position: relative;
+            padding: 15px; transition: 0.3s; height: auto; overflow: hidden; backdrop-filter: blur(10px); border: 1px solid #333;
+            animation: slideIn 0.5s both;
         }
-        tbody.card-view tr:active { transform: scale(0.98); }
+        tbody.card-view tr:hover { transform: translateY(-5px); border-color: var(--eva-green); }
         tbody.card-view td { display: block; width: 100%; border: none; text-align: left; padding: 0; }
         tbody.card-view .list-only { display: none !important; }
 
         .pilot-tag { font-size: 0.6rem; color: var(--eva-orange); border: 1px solid var(--eva-orange); padding: 2px 6px; border-radius: 3px; display: inline-block; margin-bottom: 8px; }
-        .rank-watermark { position: absolute; top: 10px; right: 15px; font-size: 4rem; opacity: 0.08; font-family: 'Impact'; pointer-events: none; z-index: 0; }
-        .card-name { font-size: 1.4rem; font-weight: 900; color: #fff; position: relative; z-index: 1; }
-        .card-info { font-size: 0.7rem; color: #888; font-family: monospace; margin-bottom: 10px; position: relative; z-index: 1; }
         
-        .sync-bar-container { 
-            width: 100%; height: 14px; background: #000; margin: 8px 0; 
-            border-radius: 2px; overflow: hidden; border: 1px solid #444; position: relative;
+        .score-bg-watermark {
+            position: absolute; top: 0px; right: 10px;
+            font-size: 5rem; font-family: 'Impact', sans-serif;
+            color: #fff; opacity: 0.08;
+            line-height: 1; pointer-events: none; z-index: 0;
         }
+
+        .card-name { font-size: 1.4rem; font-weight: 900; color: #fff; position: relative; z-index: 1; }
+        .card-info { font-size: 0.7rem; color: #888; font-family: 'Orbitron', monospace; margin-bottom: 5px; position: relative; z-index: 1; }
+        
+        .card-latest-row {
+            font-size: 0.75rem; color: #ccc; margin-bottom: 10px; 
+            background: rgba(255,255,255,0.05); padding: 6px 10px; border-radius: 2px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 3px solid var(--eva-green); position: relative; z-index: 1;
+        }
+        .result-highlight { color: #fff; font-weight: bold; text-shadow: 0 0 8px var(--eva-green); animation: pulseText 2s infinite; }
+        @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+        .sync-bar-container { width: 100%; height: 14px; background: #000; margin: 8px 0; border-radius: 2px; overflow: hidden; border: 1px solid #444; position: relative; z-index: 1;}
         .sync-fill { 
-            height: 100%; 
-            background: linear-gradient(90deg, #004d00 0%, var(--eva-green) 50%, #ccffcc 100%);
-            background-size: 200% 100%;
-            box-shadow: 0 0 20px var(--eva-green); 
-            transition: width 0.8s ease; animation: flowGlow 1.5s linear infinite;
-            display: flex; align-items: center; justify-content: flex-end;
+            height: 100%; background: linear-gradient(90deg, #004d00 0%, var(--eva-green) 50%, #ccffcc 100%);
+            background-size: 200% 100%; box-shadow: 0 0 20px var(--eva-green); 
+            transition: width 0.8s ease; animation: flowGlow 1.5s linear infinite; display: flex; align-items: center; justify-content: flex-end;
         }
         .sync-text { font-size: 0.55rem; color: #000; font-weight: bold; padding-right: 5px; white-space: nowrap; }
         @keyframes flowGlow { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
-
-        .stats-hud { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.7rem; color: #888; font-family: monospace; border-top: 1px solid #333; padding-top: 8px; margin-top: 8px; }
+        
+        .stats-hud { display: flex; justify-content: space-between; gap: 5px; font-size: 0.65rem; color: #888; font-family: 'Orbitron', monospace; border-top: 1px solid #333; padding-top: 8px; margin-top: 8px; position: relative; z-index: 1;}
 
         .row-platinum { border-left: 4px solid var(--color-platinum); }
         tbody.card-view tr.row-platinum { border: 2px solid var(--color-platinum); box-shadow: 0 0 25px rgba(0, 191, 255, 0.15); }
-        tbody.card-view tr.row-platinum::before {
-            content: "CLASSIFIED // TOP SECRET"; position: absolute; top: 0; left: 0; width: 100%;
-            background: var(--color-platinum); color: #000; font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2;
-        }
+        tbody.card-view tr.row-platinum::before { content: "CLASSIFIED // TOP SECRET"; position: absolute; top: 0; left: 0; width: 100%; background: var(--color-platinum); color: #000; font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; }
         .row-gold { border-left: 4px solid var(--color-gold); }
         tbody.card-view tr.row-gold { border: 1px solid var(--color-gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
-        tbody.card-view tr.row-gold::before {
-            content: "PRIORITY // FIRST CLASS"; position: absolute; top: 0; left: 0; width: 100%;
-            background: linear-gradient(90deg, transparent, var(--color-gold), transparent); 
-            color: #000; font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2;
-        }
+        tbody.card-view tr.row-gold::before { content: "PRIORITY // FIRST CLASS"; position: absolute; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, transparent, var(--color-gold), transparent); color: #000; font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; }
         .row-silver { border-left: 4px solid var(--color-silver); }
         tbody.card-view tr.row-silver { border: 1px solid var(--color-silver); box-shadow: inset 0 0 20px rgba(255, 15, 79, 0.05); }
         tbody.card-view tr.row-silver::after { content: ""; position: absolute; bottom: 0; right: 0; width: 15px; height: 15px; border-bottom: 2px solid var(--color-silver); border-right: 2px solid var(--color-silver); }
-        tbody.card-view tr.row-silver::before {
-            content: "TACTICAL // RESERVE"; position: absolute; top: 0; left: 0; width: 100%;
-            background: rgba(255, 15, 79, 0.1); border-bottom: 1px solid var(--color-silver);
-            color: var(--color-silver); font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; letter-spacing: 2px;
-        }
+        tbody.card-view tr.row-silver::before { content: "TACTICAL // RESERVE"; position: absolute; top: 0; left: 0; width: 100%; background: rgba(255, 15, 79, 0.1); border-bottom: 1px solid var(--color-silver); color: var(--color-silver); font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; letter-spacing: 2px; }
         .row-bronze { border-left: 4px solid var(--color-bronze); }
         tbody.card-view tr.row-bronze { border: 1px dashed var(--color-bronze); background-image: linear-gradient(0deg, transparent 50%, rgba(57, 255, 20, 0.02) 50%); background-size: 100% 4px; }
-        tbody.card-view tr.row-bronze::before {
-            content: "CALIBRATING // TRAINEE"; position: absolute; top: 0; left: 0; width: 100%;
-            background: rgba(57, 255, 20, 0.1); color: var(--color-bronze); font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2;
-        }
+        tbody.card-view tr.row-bronze::before { content: "CALIBRATING // TRAINEE"; position: absolute; top: 0; left: 0; width: 100%; background: rgba(57, 255, 20, 0.1); color: var(--color-bronze); font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; }
 
         /* === Modal === */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
         .modal-content { 
             background: rgba(15, 15, 20, 0.98); border: 1px solid #444; border-top: 4px solid var(--eva-purple); 
-            width: 95%; max-width: 750px; 
-            padding: 25px; border-radius: 4px; position: relative; 
+            width: 95%; max-width: 750px; padding: 25px; border-radius: 4px; position: relative; 
             display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: 0 0 60px rgba(157, 93, 242, 0.3);
-        }
-        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 28px; color: #666; cursor: pointer; z-index: 10; transition: 0.2s;}
-        .close-modal:hover { color: #fff; }
-
-        .modal-body { display: flex; flex-direction: column; gap: 20px; width: 100%; position: relative; z-index: 2; }
-        @media (min-width: 600px) {
-            .modal-body { flex-direction: row; align-items: flex-start; }
-            .modal-left { flex: 1; display: flex; justify-content: center; align-items: center; border-right: 1px solid #333; padding-right: 20px; }
-            .modal-right { flex: 1.5; display: flex; flex-direction: column; }
-        }
-
-        .pilot-header { margin-bottom: 15px; border-bottom: 1px solid var(--eva-green); padding-bottom: 10px; }
-        .m-name { font-size: 2rem; font-weight: 900; color: #fff; line-height: 1; }
-        .m-id { font-size: 0.8rem; color: #888; font-family: monospace; margin-top: 5px; }
-        .m-team { background: #333; color: #fff; padding: 2px 6px; border-radius: 3px; margin-left: 10px; font-size: 0.7rem; vertical-align: text-bottom;}
-
-        .sync-box { 
-            background: rgba(57, 255, 20, 0.05); border: 1px solid var(--eva-green); 
-            padding: 15px; text-align: center; margin-bottom: 15px; 
+            box-shadow: 0 0 60px rgba(157, 93, 242, 0.5);
         }
         
-        #mHistory {
-            width: 100%; padding: 10px;
-            background: #000; border: 1px solid #333; border-left: 3px solid var(--eva-orange);
-            color: var(--eva-green); font-family: 'Consolas', monospace; font-size: 0.75rem;
-            max-height: 150px; overflow-y: auto;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        .close-modal {
+            position: absolute; top: 0; right: 0; width: 40px; height: 40px;
+            background: rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.3); border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex; align-items: center; justify-content: center; font-family: sans-serif; font-size: 1.5rem; color: #fff;
+            cursor: pointer; z-index: 100; transition: 0.2s; border-bottom-left-radius: 5px;
         }
-        #mHistory::-webkit-scrollbar { width: 6px; }
-        #mHistory::-webkit-scrollbar-thumb { background: var(--eva-orange); border-radius: 3px; }
-        .log-entry { 
-            display: grid; grid-template-columns: 50px 1fr auto; gap: 10px; align-items: center;
-            border-bottom: 1px dashed #222; padding: 6px 0; 
-        }
-        .log-cup { color: #666; font-size: 0.65rem; }
-        .log-tier { color: var(--eva-orange); text-align: center; font-weight: bold; font-size: 0.7rem; }
-        .log-result { color: #fff; text-align: right; font-weight: bold; }
+        .close-modal:hover { background: var(--color-silver); color: #000; box-shadow: 0 0 15px rgba(255, 15, 79, 0.5); }
 
-        .bg-data-stream {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; opacity: 0.03; pointer-events: none;
-            overflow: hidden; padding: 20px;
-            font-family: monospace; font-size: 0.7rem; color: var(--eva-green);
-            word-break: break-all; line-height: 1.6; text-align: justify;
+        .card-header-bar {
+            height: 40px; background: linear-gradient(90deg, #333, #111);
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 50px 0 15px; border-bottom: 1px solid #555; z-index: 2;
         }
+        .header-tier-text { font-family: 'Orbitron'; font-size: 1.2rem; letter-spacing: 1px; color: #fff; }
+        .header-stars { color: #ffd700; font-size: 0.8rem; letter-spacing: 2px; }
+
+        .card-visual-area {
+            flex: 1; position: relative; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+        }
+        .cartoon-avatar { width: auto; height: 80%; z-index: 10; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6)); animation: bob 3s ease-in-out infinite; }
+        @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .card-radar-bg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; opacity: 0.3; z-index: 1; animation: radarRotate 20s linear infinite; }
+        @keyframes radarRotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        .battle-type-badge {
+            position: absolute; top: 12px; left: 12px; background: #000; border: 1px solid var(--eva-orange);
+            color: var(--eva-orange); font-size: 0.6rem; padding: 3px 8px; z-index: 10; font-weight: bold;
+            font-family: 'Orbitron', monospace; letter-spacing: 1px; box-shadow: 0 0 5px rgba(255, 153, 0, 0.5);
+        }
+        .pilot-title {
+            position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; color: #fff; font-size: 0.8rem; font-weight: bold;
+            text-shadow: 0 0 5px #000; font-style: italic; z-index: 10; background: rgba(0,0,0,0.6); padding: 4px 0; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .game-card { 
+            width: 320px; height: 620px; background: linear-gradient(145deg, #1a1a1f, #0b0b0e); 
+            border-radius: 15px; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.8); 
+            overflow: hidden; display: flex; flex-direction: column; 
+            border: 2px solid #444; transform-style: preserve-3d; 
+            animation: cardEntrance 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .game-card::after { content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to bottom right, rgba(255,255,255,0) 40%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 60%); transform: rotate(30deg); pointer-events: none; z-index: 50; animation: sheen 4s infinite; }
+        
+        .card-info-area { background: rgba(10, 10, 15, 0.95); padding: 15px; border-top: 2px solid #444; z-index: 5; }
+        .info-name { font-size: 1.5rem; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 5px; }
+        .info-meta { font-size: 0.7rem; color: #888; font-family: 'Orbitron', monospace; display: flex; justify-content: space-between; }
+        
+        .card-sync-box { margin-top: 10px; background: #000; border: 1px solid #333; padding: 5px 10px; display: flex; align-items: center; justify-content: space-between; }
+        .card-sync-label { font-size: 0.6rem; color: var(--eva-green); }
+        .card-sync-val { font-family: 'Impact'; font-size: 1.5rem; color: #fff; }
+        
+        .skill-chips { display: flex; gap: 5px; margin-top: 8px; }
+        .chip { flex: 1; background: #222; border: 1px solid #444; color: #aaa; font-size: 0.6rem; text-align: center; padding: 2px 0; border-radius: 2px; }
+
+        .card-history-box {
+            margin-top: 10px; background: rgba(0, 0, 0, 0.6); border: 1px solid #333; padding: 6px; border-radius: 4px;
+        }
+        .history-label {
+            font-size: 0.6rem; color: #888; border-bottom: 1px solid #444; margin-bottom: 5px; font-family: 'Orbitron', monospace; display: flex; justify-content: space-between;
+        }
+        .history-list-content {
+            font-family: 'Noto Sans TC', monospace; font-size: 0.7rem; color: #ccc; max-height: 60px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 5px;
+        }
+        .history-list-content::-webkit-scrollbar { width: 3px; }
+        .history-list-content::-webkit-scrollbar-thumb { background: var(--eva-green); }
+
+        .history-tag {
+            background: rgba(57, 255, 20, 0.1); border: 1px solid rgba(57, 255, 20, 0.3); color: var(--eva-green); padding: 2px 6px; border-radius: 2px; font-size: 0.65rem;
+        }
+
     </style>
 </head>
 <body>
 
-    <div id="loadingOverlay"><div class="loader-text">MAGI SYSTEM SYNC...</div></div>
+    <div class="scanline-overlay"></div>
+    <div class="tactical-grid-bg"></div>
 
-    <div id="playerModal" class="modal">
-        <div class="modal-content">
-            <div class="bg-data-stream" id="bgDataStream"></div>
-            <span class="close-modal" onclick="closeModal()">✕</span>
-            
-            <div class="modal-body">
-                <div class="modal-left">
-                    <div id="radarChart" style="width: 220px; height: 220px;"></div>
-                </div>
-                <div class="modal-right">
-                    <div class="pilot-header">
-                        <div class="m-name" id="mName">NAME</div>
-                        <div class="m-id">
-                            <span id="mId">ID: 0000</span>
-                            <span id="mTeam" class="m-team">TEAM</span>
-                        </div>
-                    </div>
-                    <div class="sync-box">
-                        <span style="font-size: 0.6rem; color: var(--eva-green); display: block; letter-spacing: 2px;">SYNCHRONIZATION RATE</span>
-                        <span id="mScore" style="font-family: 'Impact'; font-size: 2.5rem;">0</span>%
-                    </div>
-                    <div style="font-size: 0.6rem; color: #666; margin-bottom: 5px; letter-spacing: 1px;">> BATTLE_LOG_ARCHIVE</div>
-                    <div id="mHistory"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="loadingOverlay"><div class="loader-text">MAGI SYSTEM INITIALIZING</div></div>
+
+    <div id="playerModal" class="modal"></div>
 
     <div class="sticky-controls">
         <div class="header-box">
             <div class="deco-corner-text deco-tl">MAGI<br>SYS.</div>
-            <div class="deco-corner-text deco-br">VER<br>10.0</div>
+            <div class="deco-corner-text deco-br">VER<br>20.0</div>
             <div class="title-card">曜日天梯榜</div>
             <div class="sub-title">SOLAR CUP LEAGUE</div>
         </div>
@@ -317,22 +330,22 @@
         <div class="filter-container">
             <div class="filter-group">
                 <button class="filter-btn btn-all active" onclick="filterTier('all')">ALL (總覽)</button>
-                <button class="filter-btn btn-plat" onclick="filterTier('platinum')">特務駕駛員</button>
-                <button class="filter-btn btn-gold" onclick="filterTier('gold')">第一配置</button>
-                <button class="filter-btn btn-silver" onclick="filterTier('silver')">預備戰力</button>
-                <button class="filter-btn btn-bronze" onclick="filterTier('bronze')">訓練生</button>
+                <button class="filter-btn btn-plat" onclick="filterTier('platinum')">PLATINUM // 白金級</button>
+                <button class="filter-btn btn-gold" onclick="filterTier('gold')">GOLD // 黃金級</button>
+                <button class="filter-btn btn-silver" onclick="filterTier('silver')">SILVER // 白銀級</button>
+                <button class="filter-btn btn-bronze" onclick="filterTier('bronze')">BRONZE // 青銅級</button>
             </div>
         </div>
-        <div class="search-box"><input type="text" id="searchInput" onkeyup="searchPilot()" placeholder="搜尋編號、姓名或球團..."></div>
+        <div class="search-box"><input type="text" id="searchInput" onkeyup="searchPilot()" placeholder="搜尋 ID、姓名或球團..."></div>
     </div>
 
     <div class="ladder-wrapper">
-        <div style="background: linear-gradient(90deg, var(--eva-purple), transparent); padding: 4px 15px; font-size: 0.65rem; margin-bottom: 10px;">MAGI_VER.10.0: STATUS_NORMAL</div>
+        <div style="background: linear-gradient(90deg, var(--eva-purple), transparent); padding: 4px 15px; font-size: 0.65rem; margin-bottom: 10px; position:relative; z-index:1;">MAGI_VER.20.0: TACTICAL_OPS_READY</div>
         <table id="ladderTable">
             <thead id="tableHead">
                 <tr>
                     <th class="col-rank">RANK</th>
-                    <th class="col-pilot">PILOT / TEAM</th>
+                    <th class="col-pilot">PILOT / ID / TEAM</th>
                     <th class="col-sync">SYNC</th>
                 </tr>
             </thead>
@@ -355,12 +368,31 @@
 
         function process(rows) {
             globalPilots = rows.map(r => ({
-                id: r[0]||"?", name: r[1]||"N/A", team: r[2]||"-",
-                tier: r[3]||"青銅級", score: parseInt(r[4])||0,
+                id: String(r[0] || "?"), 
+                name: r[1] || "N/A", 
+                team: r[2] || "-",
+                tier: r[3] || "青銅級", 
+                score: parseInt(r[4]) || 0,
                 history: r.slice(5).filter(x => x && x !== "#N/A")
             })).filter(p => p.name !== "N/A").sort((a,b) => b.score - a.score);
+            
             render(globalPilots);
             document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        /* === 新增功能：球團顏色產生器 ===
+           將球團名稱轉換成固定的 HSL 顏色，達到自動區隔效果
+        */
+        function getTeamColor(name) {
+            if (!name || name === '-') return '#888';
+            
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            // 使用 HSL: 色相由 hash 決定, 飽和度 85%, 亮度 65% (保持霓虹感且清晰)
+            const hue = Math.abs(hash) % 360;
+            return `hsl(${hue}, 85%, 65%)`;
         }
 
         function render(pilots) {
@@ -371,36 +403,32 @@
                 if (i > 0 && p.score < pilots[i-1].score) rank = i + 1;
                 const tierKey = p.tier.includes("白金") ? "platinum" : p.tier.includes("黃金") ? "gold" : p.tier.includes("白銀") ? "silver" : "bronze";
                 
-                // === 核心算法：1-100名 動態生成樣式 ===
                 let rankClass = "rank-badge-box";
                 let rankInlineStyle = "";
-
-                if (rank === 1) { rankClass += " rank-1-style"; }
-                else if (rank === 2) { rankClass += " rank-2-style"; }
-                else if (rank === 3) { rankClass += " rank-3-style"; }
-                else if (rank <= 10) { rankClass += " rank-top10-style"; }
+                if (rank === 1) rankClass += " rank-1-style";
+                else if (rank === 2) rankClass += " rank-2-style";
+                else if (rank === 3) rankClass += " rank-3-style";
+                else if (rank <= 10) rankClass += " rank-top10-style";
                 else {
-                    // NO.11 ~ NO.100 自動生成漸層色
-                    // Hue: 從 30 (橘) -> 240 (紫/藍)
-                    // Lightness: 從 70% -> 40% (越來越暗)
-                    // Size: 隨著排名微幅縮小
-                    const normalizedRank = Math.min(rank, 100);
-                    const hue = 30 + (normalizedRank * 2.2); // 顏色旋轉
-                    const lightness = Math.max(30, 75 - (normalizedRank * 0.4)); // 亮度遞減
-                    const fontSize = Math.max(0.8, 1.4 - (normalizedRank * 0.005)); // 字體微縮
-                    
-                    rankInlineStyle = `
-                        color: hsl(${hue}, 100%, ${lightness}%);
-                        border: 1px solid hsl(${hue}, 50%, 20%);
-                        font-size: ${fontSize}rem;
-                        width: auto; height: auto; border-radius: 0; line-height: normal;
-                        text-shadow: 0 0 5px hsl(${hue}, 100%, 20%);
-                    `;
+                    const norm = Math.min(rank, 100);
+                    const hue = 30 + (norm * 2.2);
+                    const light = Math.max(30, 75 - (norm * 0.4));
+                    const fs = Math.max(0.8, 1.4 - (norm * 0.005));
+                    rankInlineStyle = `color:hsl(${hue},100%,${light}%); border:1px solid hsl(${hue},50%,20%); font-size:${fs}rem; width:auto; height:auto; border-radius:0; line-height:normal; text-shadow:0 0 5px hsl(${hue},100%,20%);`;
                 }
 
                 const barWidth = Math.min(100, (p.score / 420) * 100);
                 const atField = ((p.score / 4.5) + 12).toFixed(1);
                 const evaluation = p.score > 350 ? "傳說級駕駛員" : (p.score > 250 ? "覺醒確認" : "適格者");
+
+                const latestHistory = p.history.length > 0 ? p.history[p.history.length - 1] : "N/A";
+                const latestCup = p.history.length > 0 ? `CUP-${String(p.history.length).padStart(2,'0')}` : "NO DATA";
+                const tierName = p.tier.split(' ')[0]; 
+                const resultText = p.history.length > 0 ? `${tierName} ${latestHistory}` : "NO COMBAT DATA";
+
+                // === 取得球團動態顏色 ===
+                const teamColor = getTeamColor(p.team);
+                const teamBadgeStyle = `border-color:${teamColor}; color:${teamColor}; box-shadow: 0 0 8px ${teamColor}40;`; // 40 is hex opacity
 
                 const tr = document.createElement("tr");
                 tr.className = `row-${tierKey}`;
@@ -415,21 +443,23 @@
                     <td class="col-pilot">
                         <div class="list-only">
                             <div class="list-name">${p.name}</div>
-                            ${p.team && p.team !== '-' ? `<span class="team-badge">${p.team}</span>` : ''}
-                            <div class="list-id">ID: ${p.id}</div>
+                            <span class="list-id">ID: ${p.id}</span>
+                            ${p.team && p.team !== '-' ? `<span class="team-badge" style="${teamBadgeStyle}">${p.team}</span>` : ''}
                         </div>
 
                         <div class="card-only">
+                            <div class="score-bg-watermark">${p.score}</div>
                             <div class="pilot-tag">${p.tier} // ${evaluation}</div>
                             <div class="rank-watermark">${rank < 10 ? '0'+rank : rank}</div>
                             <div class="card-name">${p.name}</div>
-                            <div class="card-info">ID: ${p.id} ${p.team !== '-' ? '| TEAM: '+p.team : ''}</div>
+                            <div class="card-info">ID: ${p.id} ${p.team !== '-' ? `| TEAM: <span style="color:${teamColor}; font-weight:bold;">${p.team}</span>` : ''}</div>
                             
-                            <div class="sync-bar-container">
-                                <div class="sync-fill" style="width: ${barWidth}%">
-                                    <span class="sync-text">${p.score}</span>
-                                </div>
+                            <div class="card-latest-row">
+                                <span style="color:var(--eva-green)">LAST // ${latestCup}</span>
+                                <span class="result-highlight">${resultText}</span>
                             </div>
+
+                            <div class="sync-bar-container"><div class="sync-fill" style="width: ${barWidth}%"><span class="sync-text"></span></div></div>
                             <div class="stats-hud">
                                 <div>A.T. FIELD: ${atField}%</div>
                                 <div>BERSERK: ${(p.score % 14).toFixed(1)}%</div>
@@ -442,6 +472,8 @@
                 `;
                 container.appendChild(tr);
             });
+            
+            filterTier(currentFilter);
         }
 
         function filterTier(tier) {
@@ -465,13 +497,19 @@
         }
 
         function searchPilot() {
-            const term = document.getElementById("searchInput").value.toUpperCase();
+            const inputVal = document.getElementById("searchInput").value;
+            const term = inputVal ? inputVal.toUpperCase() : "";
             const isListView = document.getElementById("tableBody").classList.contains("list-view");
 
             document.querySelectorAll("#tableBody tr").forEach(tr => {
                 const data = JSON.parse(tr.dataset.json);
                 const tierKey = tr.dataset.tier;
-                const matchTerm = data.name.toUpperCase().includes(term) || data.id.toUpperCase().includes(term) || data.team.toUpperCase().includes(term);
+                
+                const nameStr = String(data.name).toUpperCase();
+                const idStr = String(data.id).toUpperCase();
+                const teamStr = String(data.team).toUpperCase();
+
+                const matchTerm = nameStr.includes(term) || idStr.includes(term) || teamStr.includes(term);
                 const matchTier = (currentFilter === 'all') || (tierKey === currentFilter);
                 
                 if (matchTerm && matchTier) {
@@ -482,85 +520,134 @@
             });
         }
 
-        function openModal(p, rank) {
-            document.getElementById("mName").innerText = p.name;
-            document.getElementById("mId").innerText = `ID: ${p.id}`;
-            document.getElementById("mTeam").innerText = p.team !== '-' ? p.team : 'NO TEAM';
-            
-            const historyHTML = p.history.length > 0 
-                ? p.history.map((h, i) => `
-                    <div class="log-entry">
-                        <span class="log-cup">CUP-${String(i+1).padStart(2,'0')}</span>
-                        <span class="log-tier">[ ${p.tier} ]</span>
-                        <span class="log-result">${h}</span>
-                    </div>
-                `).join("") 
-                : "<div class='log-entry' style='display:block; text-align:center;'>NO COMBAT DATA...</div>";
-            document.getElementById("mHistory").innerHTML = historyHTML;
-
-            generateBackgroundData(p.tier);
-            drawRadar(p.score);
-            document.getElementById("playerModal").style.display = "flex";
-
-            const scoreEl = document.getElementById("mScore");
-            let start = 0;
-            const end = p.score;
-            const duration = 1000; 
-            const startTime = performance.now();
-
-            function animateScore(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const ease = 1 - Math.pow(1 - progress, 3);
-                const currentScore = Math.floor(start + (end - start) * ease);
-                scoreEl.innerText = currentScore;
-                if (progress < 1) requestAnimationFrame(animateScore);
-                else scoreEl.innerText = end;
-            }
-            requestAnimationFrame(animateScore);
+        function calculateStars(score) {
+            if (score >= 400) return '★★★★★';
+            if (score >= 300) return '★★★★';
+            if (score >= 200) return '★★★';
+            if (score >= 100) return '★★';
+            return '★';
         }
 
-        function generateBackgroundData(targetTier) {
-            const bgContainer = document.getElementById("bgDataStream");
-            const peers = globalPilots.filter(p => p.tier === targetTier).map(p => `${p.id}_${p.name}`);
-            let noiseText = "";
-            for(let i=0; i<300; i++) {
-                noiseText += peers[Math.floor(Math.random() * peers.length)] + " // ";
+        function getBattleSettings(id) {
+            const strId = String(id);
+            let seed = 0;
+            for (let i = 0; i < strId.length; i++) {
+                seed = strId.charCodeAt(i) + ((seed << 5) - seed);
             }
-            bgContainer.innerText = noiseText;
+            const seededRandom = function(offset) {
+                var x = Math.sin(seed + offset) * 10000;
+                return x - Math.floor(x);
+            };
+
+            const types = [
+                { code: "ASSAULT", name: "ASSAULT // 強襲", color: "#ff4444" },
+                { code: "FORTRESS", name: "FORTRESS // 鐵壁", color: "#4488ff" },
+                { code: "SPEED", name: "SPEED // 高機動", color: "#ffee00" },
+                { code: "TACTIC", name: "TACTIC // 戰術", color: "#00ffaa" }
+            ];
+            
+            const titles = ["光速", "絕對", "不屈", "幻想", "暴走", "深淵", "極限", "虛空", "雷霆", "灼熱", "凍結", "神速", "鋼鐵", "無限", "混沌", "逆境", "奇蹟", "夢幻", "終極", "時空", "原子", "量子", "重力", "暗黑", "神聖", "血色", "蒼穹", "禁忌", "原始", "永恆", "瞬殺", "幻影", "無雙", "絕望", "希望", "榮耀", "毀滅", "創世", "覺醒", "暴虐"];
+            const titles2 = ["支配者", "守護神", "切球手", "破壞者", "指揮官", "墮天使", "魔術師", "處刑人", "領航員", "突擊兵", "幻影", "主宰", "狙擊手", "狂戰士", "救世主", "幻想家", "審判者", "送葬人", "開拓者", "旅行者", "防衛者", "殲滅者", "狩獵者", "觀測者", "仲裁者", "先驅者", "征服者", "收割者", "流浪者", "復仇者", "繼承者", "統治者", "毀滅者", "創造者", "守望者", "引路人", "執行官", "破壞神", "武神", "劍聖"];
+
+            const typeIndex = Math.floor(seededRandom(1) * types.length);
+            const titleIndex1 = Math.floor(seededRandom(2) * titles.length);
+            const titleIndex2 = Math.floor(seededRandom(3) * titles2.length);
+            const imageIndex = Math.floor(seededRandom(4) * 20) + 1;
+
+            return {
+                type: types[typeIndex],
+                title: `${titles[titleIndex1]}的 ${titles2[titleIndex2]}`,
+                imageUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${strId}_${imageIndex}&textureChance=50`
+            };
+        }
+
+        function openModal(p, rank) {
+            const settings = getBattleSettings(p.id);
+            const tierColorClass = `card-${p.tierKey}`;
+            const stars = calculateStars(p.score); 
+            
+            const s = p.score;
+            const attrs = [Math.min(99, 60+(s%30)), Math.min(99, 50+(s%40)), Math.min(99, 70+(s%20)), Math.min(99, 55+(s%35))];
+
+            let historyHTML = "";
+            if (p.history && p.history.length > 0) {
+                historyHTML = p.history.map((record, index) => {
+                    const cupName = `CUP-${String(index + 1).padStart(2, '0')}`;
+                    return `<div class="history-tag">${cupName}: ${record}</div>`;
+                }).join("");
+            } else {
+                historyHTML = `<span style="color:#555; font-style:italic;">NO COMBAT RECORD FOUND</span>`;
+            }
+            
+            const teamColor = getTeamColor(p.team);
+
+            const modalHTML = `
+                <div class="game-card ${tierColorClass}" id="tiltCard">
+                    <div class="close-modal" onclick="closeModal()">✕</div>
+                    <div class="card-header-bar">
+                        <span class="header-stars">${stars}</span>
+                        <span class="header-tier-text">${p.tier.split(' ')[0].toUpperCase()}</span>
+                    </div>
+                    <div class="card-visual-area">
+                        <div class="battle-type-badge" style="border-color:${settings.type.color}; color:${settings.type.color}">${settings.type.name}</div>
+                        <div class="pilot-title">"${settings.title}"</div>
+                        <img class="cartoon-avatar" src="${settings.imageUrl}" alt="Mecha Unit">
+                        <div class="card-radar-bg" id="radarChart"></div>
+                    </div>
+                    <div class="card-info-area">
+                        <div class="info-name">${p.name}</div>
+                        <div class="info-meta"><span>ID: ${p.id}</span><span>TEAM: ${p.team !== '-' ? `<span style="color:${teamColor}; font-weight:bold;">${p.team}</span>` : 'NONE'}</span></div>
+                        
+                        <div class="skill-chips">
+                            <div class="chip">ATK: ${attrs[0]}</div><div class="chip">DEF: ${attrs[1]}</div><div class="chip">SPD: ${attrs[2]}</div><div class="chip">TEC: ${attrs[3]}</div>
+                        </div>
+
+                        <div class="card-history-box">
+                            <div class="history-label">
+                                <span>BATTLE LOG</span>
+                                <span>REC: ${p.history.length}</span>
+                            </div>
+                            <div class="history-list-content">
+                                ${historyHTML}
+                            </div>
+                        </div>
+
+                        <div class="card-sync-box"><span class="card-sync-label">SYNC RATE</span><span class="card-sync-val" id="mScore">0</span></div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById("playerModal").innerHTML = modalHTML;
+            document.getElementById("playerModal").style.display = "flex";
+
+            const card = document.getElementById("tiltCard");
+            document.getElementById("playerModal").addEventListener("mousemove", (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+                const centerX = rect.width/2; const centerY = rect.height/2;
+                card.style.transform = `perspective(1000px) rotateX(${((y-centerY)/centerY)*-10}deg) rotateY(${((x-centerX)/centerX)*10}deg)`;
+            });
+            document.getElementById("playerModal").addEventListener("mouseleave", () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+            });
+
+            drawRadar(p.score);
+            const scoreEl = document.getElementById("mScore");
+            let start = 0; const end = p.score;
+            function animateScore() { start += Math.ceil((end-start)/10); scoreEl.innerText = start; if(start < end) requestAnimationFrame(animateScore); }
+            animateScore();
         }
 
         function drawRadar(score) {
             const container = document.getElementById("radarChart");
-            const size = 220, center = size/2, radius = 70;
-            const stats = [
-                Math.min(1, 0.5 + (score % 20)/40 + 0.2), Math.min(1, 0.5 + (score % 15)/35 + 0.2),
-                Math.min(1, 0.5 + (score % 18)/40 + 0.2), Math.min(1, 0.5 + (score % 22)/45 + 0.2),
-                Math.min(1, 0.5 + (score % 12)/30 + 0.2), Math.min(1, 0.5 + (score % 25)/50 + 0.2)
-            ];
+            if(!container) return;
+            const size = 250, center = size/2, radius = 90;
+            const stats = [Math.min(1, 0.5+(score%20)/40+0.2), Math.min(1, 0.5+(score%15)/35+0.2), Math.min(1, 0.5+(score%18)/40+0.2), Math.min(1, 0.5+(score%22)/45+0.2), Math.min(1, 0.5+(score%12)/30+0.2), Math.min(1, 0.5+(score%25)/50+0.2)];
             const angles = [0, 60, 120, 180, 240, 300];
-            const labels = ["ATK", "DEF", "SPD", "TEC", "STA", "MNT"];
-            
-            const points = angles.map((angle, i) => {
-                const rad = (angle - 90) * (Math.PI / 180);
-                return `${center + radius * stats[i] * Math.cos(rad)},${center + radius * stats[i] * Math.sin(rad)}`;
-            }).join(" ");
-
-            let svgHTML = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
-            [1, 0.66, 0.33].forEach(s => {
-               const p = angles.map(a => `${center + radius*s * Math.cos((a-90)*Math.PI/180)},${center + radius*s * Math.sin((a-90)*Math.PI/180)}`).join(" ");
-               svgHTML += `<polygon points="${p}" fill="none" stroke="#333" stroke-width="1" />`;
-            });
-            angles.forEach(a => svgHTML += `<line x1="${center}" y1="${center}" x2="${center + radius * Math.cos((a-90)*Math.PI/180)}" y2="${center + radius * Math.sin((a-90)*Math.PI/180)}" stroke="#333" stroke-width="1" />`);
-            svgHTML += `<polygon points="${points}" fill="rgba(57, 255, 20, 0.3)" stroke="var(--eva-green)" stroke-width="2" />`;
-            
-            angles.forEach((a, i) => {
-                const rad = (a - 90) * (Math.PI / 180);
-                const x = center + (radius + 20) * Math.cos(rad);
-                const y = center + (radius + 20) * Math.sin(rad);
-                svgHTML += `<text x="${x}" y="${y}" fill="var(--eva-orange)" font-size="10" text-anchor="middle" alignment-baseline="middle" font-weight="bold">${labels[i]}</text>`;
-            });
-            svgHTML += `</svg>`;
+            const points = angles.map((a, i) => { const rad = (a-90)*Math.PI/180; return `${center+radius*stats[i]*Math.cos(rad)},${center+radius*stats[i]*Math.sin(rad)}`; }).join(" ");
+            let svgHTML = `<svg width="100%" height="100%" viewBox="0 0 ${size} ${size}">`;
+            [1, 0.5].forEach(s => { const p = angles.map(a => `${center+radius*s*Math.cos((a-90)*Math.PI/180)},${center+radius*s*Math.sin((a-90)*Math.PI/180)}`).join(" "); svgHTML += `<polygon points="${p}" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" />`; });
+            svgHTML += `<polygon points="${points}" fill="rgba(57, 255, 20, 0.4)" stroke="var(--eva-green)" stroke-width="2" /></svg>`;
             container.innerHTML = svgHTML;
         }
 
