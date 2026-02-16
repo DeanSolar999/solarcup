@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>曜日天梯榜 - MAGI SYSTEM</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;900&family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;900&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -66,14 +66,9 @@
             border-top: 1px solid rgba(157, 93, 242, 0.3);
         }
         .title-card {
-            font-family: 'Noto Sans TC', sans-serif;
-            font-size: 2.5rem; 
-            font-weight: 900; 
-            letter-spacing: 0.1em;
-            color: #fff; text-align: center; 
-            text-shadow: 2px 2px 0px #000, -1px -1px 0 var(--eva-purple), 0 0 20px var(--eva-purple);
-            margin: 0; line-height: 1;
-            transform: scaleY(1.1);
+            font-family: 'Noto Sans TC', sans-serif; font-size: 2.5rem; font-weight: 900; letter-spacing: 0.1em;
+            color: #fff; text-align: center; text-shadow: 2px 2px 0px #000, -1px -1px 0 var(--eva-purple), 0 0 20px var(--eva-purple);
+            margin: 0; line-height: 1; transform: scaleY(1.1);
         }
         .sub-title {
             font-family: 'Orbitron', sans-serif; font-size: 0.65rem; color: var(--eva-green); letter-spacing: 3px;
@@ -113,28 +108,54 @@
         /* === List View === */
         .ladder-wrapper { max-width: 1200px; margin: 0 auto; padding: 10px 5px; position:relative; z-index:1; }
         table { width: 100%; border-spacing: 0 4px; border-collapse: separate; table-layout: fixed; }
-        
         thead th {
             color: #666; font-size: 0.65rem; padding: 10px 5px; text-transform: uppercase; 
             background: rgba(17, 17, 17, 0.9); border-bottom: 2px solid #333; font-family: 'Orbitron', sans-serif;
         }
-        
         .col-rank { width: 15%; text-align: center; } 
         .col-pilot { width: 65%; text-align: left; padding-left: 10px; }
         .col-sync { width: 20%; text-align: center; }
-
         @media (max-width: 600px) {
             .col-rank { width: 18%; }
             .col-pilot { width: 60%; }
             .col-sync { width: 22%; }
         }
-
         @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* === List Items === */
         tbody.list-view tr { background: var(--glass-bg); cursor: pointer; display: table-row; transition: 0.2s; animation: slideIn 0.4s both; }
         tbody.list-view tr:hover { background: rgba(157, 93, 242, 0.15); transform: scale(1.01); }
         tbody.list-view td { padding: 12px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
         
+        /* Card View Layout */
+        tbody.card-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; padding: 10px; }
+        tbody.card-view tr { 
+            display: flex; flex-direction: column; background: var(--glass-bg); border-radius: 6px; position: relative; padding: 15px; animation: slideIn 0.5s both;
+            border: 1px solid #333;
+            height: auto; 
+            overflow: hidden;
+        }
+        tbody.card-view td { display: block; width: 100%; border: none; text-align: left; padding: 0; }
+        
+        /* [修正點] 在卡片模式下，隱藏原本獨立的 Rank 欄位，因為我們把它搬到卡片裡面了 */
+        tbody.card-view .col-rank { display: none !important; }
+
+        /* 分組邊框 */
+        tbody.card-view tr.row-platinum { border: 2px solid var(--color-platinum) !important; box-shadow: 0 0 15px rgba(0, 191, 255, 0.2) !important; }
+        tbody.card-view tr.row-platinum::before { content: "CLASSIFIED // TOP SECRET"; position: absolute; top: 0; left: 0; width: 100%; background: var(--color-platinum); color: #000; font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; }
+
+        tbody.card-view tr.row-gold { border: 1px solid var(--color-gold) !important; box-shadow: 0 0 15px rgba(255, 215, 0, 0.15) !important; }
+        tbody.card-view tr.row-gold::before { content: "PRIORITY // FIRST CLASS"; position: absolute; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, transparent, var(--color-gold), transparent); color: #000; font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; }
+
+        tbody.card-view tr.row-silver { border: 1px solid var(--color-silver) !important; box-shadow: inset 0 0 20px rgba(255, 15, 79, 0.05) !important; }
+        tbody.card-view tr.row-silver::before { content: "TACTICAL // RESERVE"; position: absolute; top: 0; left: 0; width: 100%; background: rgba(255, 15, 79, 0.1); border-bottom: 1px solid var(--color-silver); color: var(--color-silver); font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; }
+
+        tbody.card-view tr.row-bronze { border: 1px dashed var(--color-bronze) !important; background-image: linear-gradient(0deg, transparent 50%, rgba(57, 255, 20, 0.02) 50%); background-size: 100% 4px; }
+        tbody.card-view tr.row-bronze::before { content: "CALIBRATING // TRAINEE"; position: absolute; top: 0; left: 0; width: 100%; background: rgba(57, 255, 20, 0.1); color: var(--color-bronze); font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; }
+
+        tbody.list-view .card-only { display: none !important; }
+        tbody.card-view .list-only { display: none !important; }
+
         /* Rank Badge */
         .rank-badge-box {
             display: inline-block; width: 42px; height: 42px; line-height: 42px;
@@ -151,45 +172,39 @@
         .list-score { font-family: 'Orbitron'; font-size: 1.3rem; color: var(--eva-green); text-align: center; letter-spacing: 1px; }
         
         .team-badge {
-            display: inline-block; 
-            font-size: 0.75rem; 
-            padding: 2px 8px; 
-            border-radius: 4px;
-            border: 1px solid #555; 
-            color: #888; 
-            background: rgba(0, 0, 0, 0.3);
-            font-weight: 900; 
-            letter-spacing: 1px;
-            vertical-align: middle;
-            text-shadow: 0 0 5px rgba(0,0,0,0.8);
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px;
+            border: 1px solid #555; color: #888; background: rgba(0, 0, 0, 0.3);
+            font-weight: 900; letter-spacing: 1px; vertical-align: middle;
+            text-shadow: 0 0 5px rgba(0,0,0,0.8); box-shadow: 0 0 10px rgba(0,0,0,0.2);
         }
-
-        tbody.list-view .card-only { display: none !important; }
-
-        /* === Card View === */
-        tbody.card-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; padding: 10px; }
-        tbody.card-view tr { 
-            display: flex; flex-direction: column; background: var(--glass-bg); border-radius: 6px; position: relative;
-            padding: 15px; transition: 0.3s; height: auto; overflow: hidden; backdrop-filter: blur(10px); border: 1px solid #333;
-            animation: slideIn 0.5s both;
-        }
-        tbody.card-view tr:hover { transform: translateY(-5px); border-color: var(--eva-green); }
-        tbody.card-view td { display: block; width: 100%; border: none; text-align: left; padding: 0; }
-        tbody.card-view .list-only { display: none !important; }
-
-        .pilot-tag { font-size: 0.6rem; color: var(--eva-orange); border: 1px solid var(--eva-orange); padding: 2px 6px; border-radius: 3px; display: inline-block; margin-bottom: 8px; }
         
-        .score-bg-watermark {
-            position: absolute; top: 0px; right: 10px;
-            font-size: 5rem; font-family: 'Impact', sans-serif;
-            color: #fff; opacity: 0.08;
-            line-height: 1; pointer-events: none; z-index: 0;
+        /* [新增] 標題區塊容器：用於並排顯示 Rank 與 Tag */
+        .card-header-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
         }
 
+        .pilot-tag { 
+            font-size: 0.6rem; 
+            color: var(--eva-orange); 
+            border: 1px solid var(--eva-orange); 
+            padding: 2px 8px; 
+            border-radius: 3px; 
+            display: inline-block; 
+            margin-bottom: 0; /* 移除原本的 margin，交給 flex gap 控制 */
+            font-weight: bold;
+            background: rgba(0,0,0,0.6);
+            box-shadow: 0 0 5px rgba(255, 153, 0, 0.2);
+        }
+
+        .score-bg-watermark {
+            position: absolute; top: 0px; right: 10px; font-size: 5rem; font-family: 'Impact', sans-serif;
+            color: #fff; opacity: 0.08; pointer-events: none; z-index: 0;
+        }
         .card-name { font-size: 1.4rem; font-weight: 900; color: #fff; position: relative; z-index: 1; }
         .card-info { font-size: 0.7rem; color: #888; font-family: 'Orbitron', monospace; margin-bottom: 5px; position: relative; z-index: 1; }
-        
         .card-latest-row {
             font-size: 0.75rem; color: #ccc; margin-bottom: 10px; 
             background: rgba(255,255,255,0.05); padding: 6px 10px; border-radius: 2px;
@@ -198,41 +213,77 @@
         }
         .result-highlight { color: #fff; font-weight: bold; text-shadow: 0 0 8px var(--eva-green); animation: pulseText 2s infinite; }
         @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-
-        .sync-bar-container { width: 100%; height: 14px; background: #000; margin: 8px 0; border-radius: 2px; overflow: hidden; border: 1px solid #444; position: relative; z-index: 1;}
-        .sync-fill { 
-            height: 100%; background: linear-gradient(90deg, #004d00 0%, var(--eva-green) 50%, #ccffcc 100%);
-            background-size: 200% 100%; box-shadow: 0 0 20px var(--eva-green); 
-            transition: width 0.8s ease; animation: flowGlow 1.5s linear infinite; display: flex; align-items: center; justify-content: flex-end;
-        }
-        .sync-text { font-size: 0.55rem; color: #000; font-weight: bold; padding-right: 5px; white-space: nowrap; }
-        @keyframes flowGlow { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
         
+        .sync-bar-container { width: 100%; height: 14px; background: #000; margin: 8px 0; border-radius: 2px; overflow: hidden; border: 1px solid #444; position: relative; z-index: 1;}
+        .sync-fill { height: 100%; background: linear-gradient(90deg, #004d00 0%, var(--eva-green) 50%, #ccffcc 100%); background-size: 200% 100%; box-shadow: 0 0 20px var(--eva-green); }
         .stats-hud { display: flex; justify-content: space-between; gap: 5px; font-size: 0.65rem; color: #888; font-family: 'Orbitron', monospace; border-top: 1px solid #333; padding-top: 8px; margin-top: 8px; position: relative; z-index: 1;}
 
-        .row-platinum { border-left: 4px solid var(--color-platinum); }
-        tbody.card-view tr.row-platinum { border: 2px solid var(--color-platinum); box-shadow: 0 0 25px rgba(0, 191, 255, 0.15); }
-        tbody.card-view tr.row-platinum::before { content: "CLASSIFIED // TOP SECRET"; position: absolute; top: 0; left: 0; width: 100%; background: var(--color-platinum); color: #000; font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; }
-        .row-gold { border-left: 4px solid var(--color-gold); }
-        tbody.card-view tr.row-gold { border: 1px solid var(--color-gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
-        tbody.card-view tr.row-gold::before { content: "PRIORITY // FIRST CLASS"; position: absolute; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, transparent, var(--color-gold), transparent); color: #000; font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; }
-        .row-silver { border-left: 4px solid var(--color-silver); }
-        tbody.card-view tr.row-silver { border: 1px solid var(--color-silver); box-shadow: inset 0 0 20px rgba(255, 15, 79, 0.05); }
-        tbody.card-view tr.row-silver::after { content: ""; position: absolute; bottom: 0; right: 0; width: 15px; height: 15px; border-bottom: 2px solid var(--color-silver); border-right: 2px solid var(--color-silver); }
-        tbody.card-view tr.row-silver::before { content: "TACTICAL // RESERVE"; position: absolute; top: 0; left: 0; width: 100%; background: rgba(255, 15, 79, 0.1); border-bottom: 1px solid var(--color-silver); color: var(--color-silver); font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; letter-spacing: 2px; }
-        .row-bronze { border-left: 4px solid var(--color-bronze); }
-        tbody.card-view tr.row-bronze { border: 1px dashed var(--color-bronze); background-image: linear-gradient(0deg, transparent 50%, rgba(57, 255, 20, 0.02) 50%); background-size: 100% 4px; }
-        tbody.card-view tr.row-bronze::before { content: "CALIBRATING // TRAINEE"; position: absolute; top: 0; left: 0; width: 100%; background: rgba(57, 255, 20, 0.1); color: var(--color-bronze); font-size: 0.5rem; font-weight: 900; text-align: center; padding: 1px; z-index: 2; }
-
-        /* === Modal === */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
-        .modal-content { 
-            background: rgba(15, 15, 20, 0.98); border: 1px solid #444; border-top: 4px solid var(--eva-purple); 
-            width: 95%; max-width: 750px; padding: 25px; border-radius: 4px; position: relative; 
-            display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: 0 0 60px rgba(157, 93, 242, 0.5);
+        /* === Modal Environment & Card Styles === */
+        .modal { 
+            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; 
+            backdrop-filter: blur(8px); align-items: center; justify-content: center; 
+            transition: background 0.5s ease;
         }
-        
+
+        /* SSR: 黃金都心 */
+        .modal[data-rank="ssr"] { 
+            background: radial-gradient(circle at 50% 30%, rgba(255, 215, 0, 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 100, 0, 0.3) 0%, transparent 30%), radial-gradient(circle at 20% 80%, rgba(157, 93, 242, 0.3) 0%, transparent 40%), #000;
+        }
+        /* SR: 核心機房 */
+        .modal[data-rank="sr"] {
+            background: linear-gradient(rgba(0, 191, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 191, 255, 0.1) 1px, transparent 1px), radial-gradient(circle at center, rgba(0, 20, 40, 0.8) 0%, #000 100%); background-size: 40px 40px, 40px 40px, 100% 100%;
+        }
+        /* S: 紫電通道 */
+        .modal[data-rank="s"] {
+            background: repeating-conic-gradient(from 0deg, rgba(157, 93, 242, 0.05) 0deg, transparent 10deg, rgba(157, 93, 242, 0.05) 20deg), radial-gradient(circle at center, transparent 0%, #000 80%);
+        }
+        /* A: 戰術雷達 */
+        .modal[data-rank="a"] {
+            background: repeating-radial-gradient(circle at center, transparent 0, transparent 49px, rgba(57, 255, 20, 0.1) 50px), radial-gradient(circle at center, rgba(0, 50, 0, 0.5) 0%, #000 100%);
+        }
+        /* B: 工業區 */
+        .modal[data-rank="b"] {
+            background: repeating-linear-gradient(45deg, rgba(255, 153, 0, 0.05), rgba(255, 153, 0, 0.05) 10px, transparent 10px, transparent 20px), linear-gradient(to bottom, #111, #000);
+        }
+        /* C: 虛空 */
+        .modal[data-rank="c"] { background: rgba(0,0,0,0.98); }
+
+        /* Modal Card Styles */
+        .modal-card { 
+            width: 320px; height: 620px; background: linear-gradient(145deg, #1a1a1f, #0b0b0e); 
+            border-radius: 15px; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.8); 
+            overflow: hidden; display: flex; flex-direction: column; 
+            border: 2px solid #444; transform-style: preserve-3d; 
+            animation: cardEntrance 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+
+        /* Rank Styles */
+        .modal-card.rank-ssr { border: 3px solid #ffd700; box-shadow: 0 0 60px rgba(255, 215, 0, 0.5); }
+        .modal-card.rank-ssr .card-visual-area::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent); animation: sheen 2s infinite; z-index: 10; pointer-events: none;
+        }
+        .modal-card.rank-ssr::after { content: '👑'; font-size: 150px; position: absolute; top: 10%; left: 50%; transform: translateX(-50%) rotate(-10deg); opacity: 0.1; z-index: 0; filter: drop-shadow(0 0 10px gold); }
+
+        .modal-card.rank-sr { border: 2px solid #00bfff; box-shadow: 0 0 40px rgba(0, 191, 255, 0.4); }
+        .modal-card.rank-sr .card-visual-area { background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 191, 255, 0.1) 3px); background-size: 100% 4px; animation: gridMove 10s linear infinite; }
+        .modal-card.rank-sr::after { content: '💠'; font-size: 150px; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); opacity: 0.1; z-index: 0; }
+
+        .modal-card.rank-s { border: 2px solid var(--eva-purple); box-shadow: 0 0 30px rgba(157, 93, 242, 0.3); }
+        .modal-card.rank-s .card-visual-area::after { content: ''; position: absolute; inset: 0; background: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0l2.5 7.5L20 10l-7.5 2.5L10 20l-2.5-7.5L0 10l7.5-2.5z" fill="%239d5df2" fill-opacity="0.1"/></svg>'); opacity: 0.5; }
+        .modal-card.rank-s::after { content: '★'; font-size: 150px; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); opacity: 0.1; z-index: 0; color: var(--eva-purple); }
+
+        .modal-card.rank-a { border: 1px solid var(--eva-green); box-shadow: 0 0 20px rgba(57, 255, 20, 0.2); }
+        .modal-card.rank-a .card-visual-area { background: radial-gradient(circle, transparent 20%, rgba(57, 255, 20, 0.05) 21%, transparent 22%); background-size: 50px 50px; }
+        .modal-card.rank-a::after { content: '❮'; font-size: 150px; position: absolute; top: 10%; left: 50%; transform: translateX(-50%) rotate(90deg); opacity: 0.1; z-index: 0; color: var(--eva-green); }
+
+        .modal-card.rank-b { border: 1px solid var(--eva-orange); box-shadow: 0 0 10px rgba(255, 15, 79, 0.2); }
+        .modal-card.rank-b::after { content: '●'; font-size: 150px; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); opacity: 0.05; z-index: 0; color: var(--eva-orange); }
+
+        .modal-card.rank-c { border: 1px solid #555; background: #111; }
+
+        @keyframes sheen { 0% { transform: translate(-100%, -100%) rotate(45deg); } 100% { transform: translate(100%, 100%) rotate(45deg); } }
+
         .close-modal {
             position: absolute; top: 0; right: 0; width: 40px; height: 40px;
             background: rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.3); border-bottom: 1px solid rgba(255, 255, 255, 0.3);
@@ -241,13 +292,33 @@
         }
         .close-modal:hover { background: var(--color-silver); color: #000; box-shadow: 0 0 15px rgba(255, 15, 79, 0.5); }
 
+        /* === [修復] 卡片頭部排版 === */
         .card-header-bar {
-            height: 40px; background: linear-gradient(90deg, #333, #111);
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 50px 0 15px; border-bottom: 1px solid #555; z-index: 2;
+            height: 45px; 
+            background: linear-gradient(90deg, #333, #111);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 45px 0 15px; 
+            border-bottom: 1px solid #555;
+            z-index: 2;
         }
-        .header-tier-text { font-family: 'Orbitron'; font-size: 1.2rem; letter-spacing: 1px; color: #fff; }
-        .header-stars { color: #ffd700; font-size: 0.8rem; letter-spacing: 2px; }
+        .header-tier-text {
+            font-family: 'Orbitron';
+            font-size: 1.0rem; 
+            letter-spacing: 1px;
+            color: #fff;
+            font-weight: 900;
+            white-space: nowrap; 
+            overflow: visible;
+        }
+        .header-stars {
+            color: #ffd700;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-right: 10px; 
+            flex-shrink: 0;
+        }
 
         .card-visual-area {
             flex: 1; position: relative; display: flex; align-items: center; justify-content: center;
@@ -267,15 +338,6 @@
             position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; color: #fff; font-size: 0.8rem; font-weight: bold;
             text-shadow: 0 0 5px #000; font-style: italic; z-index: 10; background: rgba(0,0,0,0.6); padding: 4px 0; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-
-        .game-card { 
-            width: 320px; height: 620px; background: linear-gradient(145deg, #1a1a1f, #0b0b0e); 
-            border-radius: 15px; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.8); 
-            overflow: hidden; display: flex; flex-direction: column; 
-            border: 2px solid #444; transform-style: preserve-3d; 
-            animation: cardEntrance 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
-        .game-card::after { content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to bottom right, rgba(255,255,255,0) 40%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 60%); transform: rotate(30deg); pointer-events: none; z-index: 50; animation: sheen 4s infinite; }
         
         .card-info-area { background: rgba(10, 10, 15, 0.95); padding: 15px; border-top: 2px solid #444; z-index: 5; }
         .info-name { font-size: 1.5rem; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 5px; }
@@ -302,8 +364,7 @@
 
         .history-tag {
             background: rgba(57, 255, 20, 0.1); border: 1px solid rgba(57, 255, 20, 0.3); color: var(--eva-green); 
-            padding: 2px 8px; /* 加寬內距 */
-            border-radius: 2px; font-size: 0.65rem;
+            padding: 2px 8px; border-radius: 2px; font-size: 0.65rem;
         }
 
     </style>
@@ -320,7 +381,7 @@
     <div class="sticky-controls">
         <div class="header-box">
             <div class="deco-corner-text deco-tl">MAGI<br>SYS.</div>
-            <div class="deco-corner-text deco-br">VER<br>20.0</div>
+            <div class="deco-corner-text deco-br">VER<br>22.2</div>
             <div class="title-card">曜日天梯榜</div>
             <div class="sub-title">SOLAR CUP LEAGUE</div>
         </div>
@@ -338,7 +399,7 @@
     </div>
 
     <div class="ladder-wrapper">
-        <div style="background: linear-gradient(90deg, var(--eva-purple), transparent); padding: 4px 15px; font-size: 0.65rem; margin-bottom: 10px; position:relative; z-index:1;">MAGI_VER.20.0: TACTICAL_OPS_READY</div>
+        <div style="background: linear-gradient(90deg, var(--eva-purple), transparent); padding: 4px 15px; font-size: 0.65rem; margin-bottom: 10px; position:relative; z-index:1;">MAGI_VER.22.2: TACTICAL_OPS_READY</div>
         <table id="ladderTable">
             <thead id="tableHead">
                 <tr>
@@ -426,7 +487,9 @@
                 tr.className = `row-${tierKey}`;
                 tr.dataset.tier = tierKey;
                 tr.dataset.json = JSON.stringify({...p, rank, tierKey});
-                tr.onclick = () => openModal(p, rank);
+                
+                const currentRank = rank;
+                tr.onclick = () => openModal(p, currentRank);
 
                 tr.innerHTML = `
                     <td class="rank-num text-${tierKey} col-rank">
@@ -441,8 +504,12 @@
 
                         <div class="card-only">
                             <div class="score-bg-watermark">${p.score}</div>
-                            <div class="pilot-tag">${p.tier} // ${evaluation}</div>
-                            <div class="rank-watermark">${rank < 10 ? '0'+rank : rank}</div>
+                            
+                            <div class="card-header-row">
+                                <div class="${rankClass}" style="${rankInlineStyle}">${rank < 10 ? '0'+rank : rank}</div>
+                                <div class="pilot-tag">${p.tier} // ${evaluation}</div>
+                            </div>
+
                             <div class="card-name">${p.name}</div>
                             <div class="card-info">ID: ${p.id} ${p.team !== '-' ? `| TEAM: <span style="color:${teamColor}; font-weight:bold;">${p.team}</span>` : ''}</div>
                             
@@ -488,7 +555,6 @@
             searchPilot();
         }
 
-        /* 修正點：使用 trim() 去除空白，確保搜尋精準 */
         function searchPilot() {
             const inputVal = document.getElementById("searchInput").value;
             const term = inputVal ? inputVal.toUpperCase().trim() : "";
@@ -556,22 +622,30 @@
 
         function openModal(p, rank) {
             const settings = getBattleSettings(p.id);
-            const tierColorClass = `card-${p.tierKey}`;
-            const stars = calculateStars(p.score); 
             
+            // SSR/SR/S/A/B/C 階級邏輯
+            let luxuryClass = "rank-c";
+            let rankCode = "c";
+            let rankLabel = "C-RANK // UNIT";
+
+            if (rank <= 3) { luxuryClass = "rank-ssr"; rankCode = "ssr"; rankLabel = "SSR // LEGEND"; }
+            else if (rank <= 10) { luxuryClass = "rank-sr"; rankCode = "sr"; rankLabel = "SR // ELITE"; }
+            else if (rank <= 30) { luxuryClass = "rank-s"; rankCode = "s"; rankLabel = "S-RANK // ACE"; }
+            else if (rank <= 60) { luxuryClass = "rank-a"; rankCode = "a"; rankLabel = "A-RANK // MAIN"; }
+            else if (rank <= 100) { luxuryClass = "rank-b"; rankCode = "b"; rankLabel = "B-RANK // SUP"; }
+            else { luxuryClass = "rank-c"; rankCode = "c"; rankLabel = "C-RANK // UNIT"; }
+
+            const stars = calculateStars(p.score); 
             const s = p.score;
             const attrs = [Math.min(99, 60+(s%30)), Math.min(99, 50+(s%40)), Math.min(99, 70+(s%20)), Math.min(99, 55+(s%35))];
 
-            // 修正點：取出當前級別名稱 (例如 "白金級")
             const currentTierName = p.tier.split(' ')[0];
 
             let historyHTML = "";
             if (p.history && p.history.length > 0) {
                 historyHTML = p.history.map((record, index) => {
                     const cupName = `CUP-${String(index + 1).padStart(2, '0')}`;
-                    // 修正點：如果戰績文字中沒有級別，則補上級別
                     const displayRecord = record.includes(currentTierName) ? record : `${currentTierName} ${record}`;
-                    
                     return `<div class="history-tag">${cupName}: ${displayRecord}</div>`;
                 }).join("");
             } else {
@@ -580,12 +654,16 @@
             
             const teamColor = getTeamColor(p.team);
 
+            // 設置環境 data-rank
+            const modal = document.getElementById("playerModal");
+            modal.dataset.rank = rankCode;
+
             const modalHTML = `
-                <div class="game-card ${tierColorClass}" id="tiltCard">
+                <div class="modal-card ${luxuryClass}" id="tiltCard">
                     <div class="close-modal" onclick="closeModal()">✕</div>
                     <div class="card-header-bar">
                         <span class="header-stars">${stars}</span>
-                        <span class="header-tier-text">${p.tier.split(' ')[0].toUpperCase()}</span>
+                        <span class="header-tier-text">${rankLabel}</span>
                     </div>
                     <div class="card-visual-area">
                         <div class="battle-type-badge" style="border-color:${settings.type.color}; color:${settings.type.color}">${settings.type.name}</div>
@@ -616,17 +694,17 @@
                 </div>
             `;
 
-            document.getElementById("playerModal").innerHTML = modalHTML;
-            document.getElementById("playerModal").style.display = "flex";
+            modal.innerHTML = modalHTML;
+            modal.style.display = "flex";
 
             const card = document.getElementById("tiltCard");
-            document.getElementById("playerModal").addEventListener("mousemove", (e) => {
+            modal.addEventListener("mousemove", (e) => {
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left; const y = e.clientY - rect.top;
                 const centerX = rect.width/2; const centerY = rect.height/2;
                 card.style.transform = `perspective(1000px) rotateX(${((y-centerY)/centerY)*-10}deg) rotateY(${((x-centerX)/centerX)*10}deg)`;
             });
-            document.getElementById("playerModal").addEventListener("mouseleave", () => {
+            modal.addEventListener("mouseleave", () => {
                 card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
             });
 
