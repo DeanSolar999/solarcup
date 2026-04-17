@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-<head>   
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>曜日天梯榜 - MAGI SYSTEM</title>
@@ -88,7 +88,10 @@
             padding: 10px 15px; cursor: pointer; font-size: 0.75rem; border-radius: 2px; transition: 0.2s;
             flex: 0 0 auto; min-width: 90px; text-align: center; 
             font-family: 'Orbitron', 'Noto Sans TC', sans-serif; font-weight: 700; letter-spacing: 1px;
+            /* 手機點擊回饋 */
+            touch-action: manipulation;
         }
+        .filter-btn:active { transform: scale(0.95); }
         .filter-btn.active { color: #000 !important; font-weight: 900; transform: scale(1.02); border: none; }
         .btn-all.active { background: #fff; box-shadow: 0 0 8px #fff; }
         .btn-plat.active { background: var(--color-platinum); box-shadow: 0 0 10px var(--color-platinum); }
@@ -124,15 +127,17 @@
         @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
         /* === List Items === */
-        tbody.list-view tr { background: var(--glass-bg); cursor: pointer; display: table-row; transition: 0.2s; animation: slideIn 0.4s both; }
+        tbody.list-view tr { background: var(--glass-bg); cursor: pointer; display: table-row; transition: transform 0.1s, background 0.2s; animation: slideIn 0.4s both; }
         tbody.list-view tr:hover { background: rgba(157, 93, 242, 0.15); transform: scale(1.01); }
+        /* 手機點擊回饋 */
+        tbody.list-view tr:active, tbody.card-view tr:active { transform: scale(0.98); }
         tbody.list-view td { padding: 12px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
         
         /* Card View Layout */
         tbody.card-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; padding: 10px; }
         tbody.card-view tr { 
             display: flex; flex-direction: column; background: var(--glass-bg); border-radius: 6px; position: relative; padding: 15px; animation: slideIn 0.5s both;
-            border: 1px solid #333; height: auto; overflow: hidden; cursor: pointer;
+            border: 1px solid #333; height: auto; overflow: hidden; cursor: pointer; transition: transform 0.1s;
         }
         tbody.card-view td { display: block; width: 100%; border: none; text-align: left; padding: 0; }
         tbody.card-view .col-rank { display: none !important; }
@@ -200,7 +205,6 @@
         
         .sync-bar-container { width: 100%; height: 14px; background: #000; margin: 8px 0; border-radius: 2px; overflow: hidden; border: 1px solid #444; position: relative; z-index: 10;}
         
-        /* 動態進度條動畫 */
         .sync-fill { 
             height: 100%; 
             background: linear-gradient(90deg, #004d00 0%, var(--eva-green) 50%, #ccffcc 100%); 
@@ -217,39 +221,30 @@
             align-items: center; justify-content: center; 
             opacity: 0; pointer-events: none; 
             transition: opacity 0.3s ease; 
-            cursor: pointer; 
             background-color: rgba(0, 0, 0, 0.85); 
             overflow: hidden; 
+            -webkit-tap-highlight-color: transparent;
         }
         
         .modal.active { opacity: 1; pointer-events: auto; }
 
-        /* --- 大背景動態特效容器 --- */
         #modalBgLayer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 0; pointer-events: none; overflow: hidden;
         }
 
         /* --- 階級專屬大背景特效 --- */
-        
-        /* SSR (LEGEND): 七彩光芒 煙霧的動態背景 (濃度與範圍 -50%) */
-        .bg-ssr {
-            background: rgba(0, 0, 0, 0.95); /* 稍微加深底色，讓淡煙霧更立體 */
-        }
+        .bg-ssr { background: rgba(0, 0, 0, 0.95); }
         .bg-ssr::before, .bg-ssr::after {
             content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            filter: blur(60px); 
-            opacity: 0.35; /* 濃度下調約 50% */
-            pointer-events: none;
+            filter: blur(60px); opacity: 0.35; pointer-events: none;
         }
-        /* 光源 A：範圍與透明度再縮小 */
         .bg-ssr::before {
             background: radial-gradient(circle at 30% 30%, rgba(255, 0, 128, 0.5) 0%, transparent 20%),
                         radial-gradient(circle at 70% 70%, rgba(0, 255, 255, 0.5) 0%, transparent 20%),
                         radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.4) 0%, transparent 25%);
             animation: rainbowSmoke 15s infinite alternate ease-in-out;
         }
-        /* 光源 B：範圍與透明度再縮小 */
         .bg-ssr::after {
             background: radial-gradient(circle at 70% 30%, rgba(138, 43, 226, 0.5) 0%, transparent 20%),
                         radial-gradient(circle at 30% 70%, rgba(57, 255, 20, 0.5) 0%, transparent 20%);
@@ -266,15 +261,10 @@
             100% { transform: rotate(-90deg) translate(5%, -5%) scale(1); }
         }
 
-        /* SR (ELITE): 星空質感的動態背景 */
-        .bg-sr {
-            background: radial-gradient(ellipse at bottom, #090a15 0%, #000000 100%);
-        }
+        .bg-sr { background: radial-gradient(ellipse at bottom, #090a15 0%, #000000 100%); }
         .bg-sr::before, .bg-sr::after {
-            content: ""; position: absolute; top: 0; left: 0; width: 200%; height: 200%;
-            pointer-events: none;
+            content: ""; position: absolute; top: 0; left: 0; width: 200%; height: 200%; pointer-events: none;
         }
-        /* 前層大星星 */
         .bg-sr::before {
             background-image: 
                 radial-gradient(1.5px 1.5px at 20px 30px, #fff, rgba(0,0,0,0)),
@@ -282,40 +272,22 @@
                 radial-gradient(1px 1px at 150px 140px, rgba(255,255,255,0.6), rgba(0,0,0,0)),
                 radial-gradient(2px 2px at 220px 60px, #fff, rgba(0,0,0,0)),
                 radial-gradient(1.5px 1.5px at 280px 180px, rgba(255,255,255,0.9), rgba(0,0,0,0));
-            background-size: 300px 300px;
-            animation: starryScroll 60s linear infinite;
-            opacity: 0.8;
+            background-size: 300px 300px; animation: starryScroll 60s linear infinite; opacity: 0.8;
         }
-        /* 後層細小星空視差 */
         .bg-sr::after {
             background-image: 
                 radial-gradient(1px 1px at 50px 160px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
                 radial-gradient(1px 1px at 130px 40px, #fff, rgba(0,0,0,0)),
                 radial-gradient(1.5px 1.5px at 200px 210px, rgba(255,255,255,0.5), rgba(0,0,0,0));
-            background-size: 200px 200px;
-            animation: starryScrollFast 40s linear infinite;
-            opacity: 0.5; transform: rotate(15deg);
+            background-size: 200px 200px; animation: starryScrollFast 40s linear infinite; opacity: 0.5; transform: rotate(15deg);
         }
-        @keyframes starryScroll {
-            from { background-position: 0 0; } to { background-position: 0 -900px; }
-        }
-        @keyframes starryScrollFast {
-            from { background-position: 0 0; } to { background-position: 200px -600px; }
-        }
+        @keyframes starryScroll { from { background-position: 0 0; } to { background-position: 0 -900px; } }
+        @keyframes starryScrollFast { from { background-position: 0 0; } to { background-position: 200px -600px; } }
 
-        /* S: 紫電掃描線 */
-        .bg-s {
-            background: 
-                linear-gradient(rgba(157, 93, 242, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(157, 93, 242, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px; transform: perspective(500px) rotateX(45deg); transform-origin: center top;
-        }
-        .bg-s::after {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 10px; background: var(--eva-purple); box-shadow: 0 0 20px var(--eva-purple); animation: scanlineVertical 4s ease-in-out infinite alternate; opacity: 0.6;
-        }
+        .bg-s { background: linear-gradient(rgba(157, 93, 242, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(157, 93, 242, 0.05) 1px, transparent 1px); background-size: 50px 50px; transform: perspective(500px) rotateX(45deg); transform-origin: center top; }
+        .bg-s::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 10px; background: var(--eva-purple); box-shadow: 0 0 20px var(--eva-purple); animation: scanlineVertical 4s ease-in-out infinite alternate; opacity: 0.6; }
         @keyframes scanlineVertical { 0% { top: -10%; } 100% { top: 110%; } }
 
-        /* A: 雷達擴散波 */
         .bg-a { background: radial-gradient(circle at center, rgba(57, 255, 20, 0.05) 0%, transparent 50%); }
         .bg-a::before {
             content: ""; position: absolute; top: 50%; left: 50%; width: 100vmax; height: 100vmax; transform: translate(-50%, -50%);
@@ -323,13 +295,9 @@
         }
         @keyframes radarPulse { from { transform: translate(-50%, -50%) scale(0.5); opacity: 1; } to { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
 
-        /* B: 警告斜紋 */
-        .bg-b {
-            background: repeating-linear-gradient(45deg, rgba(255, 153, 0, 0.05), rgba(255, 153, 0, 0.05) 40px, transparent 40px, transparent 80px); background-size: 200% 200%; animation: warningScroll 20s linear infinite;
-        }
+        .bg-b { background: repeating-linear-gradient(45deg, rgba(255, 153, 0, 0.05), rgba(255, 153, 0, 0.05) 40px, transparent 40px, transparent 80px); background-size: 200% 200%; animation: warningScroll 20s linear infinite; }
         @keyframes warningScroll { from { background-position: 0 0; } to { background-position: 100% 100%; } }
 
-        /* C: 呼吸靜默 */
         .bg-c { background: radial-gradient(circle at center, rgba(100, 100, 100, 0.1) 0%, transparent 60%); animation: breathe 6s ease-in-out infinite alternate; }
         @keyframes breathe { 0% { opacity: 0.3; } 100% { opacity: 0.8; } }
 
@@ -338,10 +306,18 @@
             width: 320px; height: 620px; background: linear-gradient(145deg, #1a1a1f, #0b0b0e); 
             border-radius: 15px; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.8); 
             overflow: hidden; display: flex; flex-direction: column; 
-            border: 2px solid #444; transform-style: preserve-3d; 
+            border: 2px solid #444; 
+            /* GPU 加速與 3D 基礎設定 */
+            transform-style: preserve-3d; 
+            will-change: transform;
             animation: cardEntrance 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             cursor: default; 
-            z-index: 10; /* 確保在背景層之上 */
+            z-index: 10; 
+        }
+
+        /* 手機高度不足時自動縮放卡片防裁切 */
+        @media (max-height: 680px) {
+            .modal-card { transform: scale(0.85); animation: cardEntranceMobile 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         }
 
         .modal-card-dynamic-bg { display: none; }
@@ -364,14 +340,15 @@
         .modal-card.rank-c { border: 1px solid #555; background: #111; }
 
         @keyframes cardEntrance { from { opacity: 0; transform: scale(0.8) translateY(50px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes cardEntranceMobile { from { opacity: 0; transform: scale(0.7) translateY(50px); } to { opacity: 1; transform: scale(0.85) translateY(0); } }
 
         .close-modal {
-            position: absolute; top: 0; right: 0; width: 40px; height: 40px;
+            position: absolute; top: 0; right: 0; width: 45px; height: 45px; /* 稍微放大增加手機點擊範圍 */
             background: rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.3); border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            display: flex; align-items: center; justify-content: center; font-family: sans-serif; font-size: 1.5rem; color: #fff;
-            cursor: pointer; z-index: 100; transition: 0.2s; border-bottom-left-radius: 5px;
+            display: flex; align-items: center; justify-content: center; font-family: sans-serif; font-size: 1.8rem; color: #fff;
+            cursor: pointer; z-index: 100; transition: 0.2s; border-bottom-left-radius: 8px;
         }
-        .close-modal:hover { background: var(--color-silver); color: #000; box-shadow: 0 0 15px rgba(255, 15, 79, 0.5); }
+        .close-modal:hover, .close-modal:active { background: var(--color-silver); color: #000; box-shadow: 0 0 15px rgba(255, 15, 79, 0.5); }
 
         .card-header-bar {
             height: 45px; background: linear-gradient(90deg, rgba(50,50,60,0.8), rgba(20,20,30,0.8));
@@ -435,7 +412,7 @@
     <div class="sticky-controls">
         <div class="header-box">
             <div class="deco-corner-text deco-tl">MAGI<br>SYS.</div>
-            <div class="deco-corner-text deco-br">VER<br>27.1<br>BG.DYN</div>
+            <div class="deco-corner-text deco-br">VER<br>28.0<br>MOB.OPT</div>
             <div class="title-card">曜日天梯榜</div>
             <div class="sub-title">SOLAR CUP LEAGUE</div>
         </div>
@@ -453,7 +430,7 @@
     </div>
 
     <div class="ladder-wrapper">
-        <div style="background: linear-gradient(90deg, var(--eva-purple), transparent); padding: 4px 15px; font-size: 0.65rem; margin-bottom: 10px; position:relative; z-index:1;">MAGI_VER.27.1: TACTICAL_OPS_READY</div>
+        <div style="background: linear-gradient(90deg, var(--eva-purple), transparent); padding: 4px 15px; font-size: 0.65rem; margin-bottom: 10px; position:relative; z-index:1;">MAGI_VER.28.0: TACTICAL_OPS_READY</div>
         <table id="ladderTable">
             <thead id="tableHead">
                 <tr>
@@ -707,6 +684,9 @@
         }
 
         function openModal(p, rank, barWidth) {
+            // 打開時鎖定背景滑動
+            document.body.style.overflow = 'hidden';
+
             const settings = getBattleSettings(p.id);
             
             let luxuryClass = "rank-c"; let rankCode = "c"; let rankLabel = "C-RANK // UNIT";
@@ -736,7 +716,6 @@
             const teamColor = getTeamColor(p.team);
 
             const modal = document.getElementById("playerModal");
-            
             const bgLayer = document.getElementById("modalBgLayer");
             bgLayer.className = `bg-${rankCode}`;
 
@@ -795,21 +774,39 @@
 
             const card = document.getElementById("tiltCard");
             
-            card.onmousemove = (e) => {
+            // --- 滑鼠與手機觸控共用邏輯 ---
+            function handleTilt(clientX, clientY, isTouch) {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left; 
-                const y = e.clientY - rect.top;
+                const x = clientX - rect.left; 
+                const y = clientY - rect.top;
                 const centerX = rect.width / 2; 
                 const centerY = rect.height / 2;
                 
                 card.style.transition = 'none';
-                card.style.transform = `perspective(1000px) rotateX(${((y - centerY) / centerY) * -10}deg) rotateY(${((x - centerX) / centerX) * 10}deg)`;
-            };
-            
-            card.onmouseleave = () => {
+                // 手機觸控時稍微減弱傾斜幅度，避免太過敏感
+                const tiltMultiplier = isTouch ? 5 : 10;
+                card.style.transform = `perspective(1000px) rotateX(${((y - centerY) / centerY) * -tiltMultiplier}deg) rotateY(${((x - centerX) / centerX) * tiltMultiplier}deg)`;
+            }
+
+            function handleTiltReset() {
                 card.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
                 card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
-            };
+            }
+
+            // PC 滑鼠事件
+            card.addEventListener('mousemove', (e) => handleTilt(e.clientX, e.clientY, false));
+            card.addEventListener('mouseleave', handleTiltReset);
+
+            // 手機觸控事件
+            card.addEventListener('touchmove', (e) => {
+                // 只有在畫面高度足夠，不需要捲動卡片時，才防止預設滑動行為
+                if(window.innerHeight > 680) {
+                    e.preventDefault(); 
+                }
+                handleTilt(e.touches[0].clientX, e.touches[0].clientY, true);
+            }, { passive: false });
+            card.addEventListener('touchend', handleTiltReset);
+            card.addEventListener('touchcancel', handleTiltReset);
 
             setTimeout(() => {
                 document.getElementById("syncFillBar").style.width = `${barWidth}%`;
@@ -845,6 +842,8 @@
         }
 
         function closeModal() { 
+            // 關閉時解除背景鎖定
+            document.body.style.overflow = '';
             const modal = document.getElementById("playerModal");
             modal.classList.remove("active");
             setTimeout(() => { modal.style.display = "none"; }, 300);
